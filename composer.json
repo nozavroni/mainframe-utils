@@ -1,7 +1,9 @@
 {
-    "name": "nozavroni/mainframe-router",
-    "description": "A router component for Mainframe",
+    "name": "nozavroni/mainframe-utils",
+    "description": "Utilities (various classes and functions) in support of the Mainframe (both its core and its components)",
     "type": "library",
+    "license": "proprietary",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Luke Visinoni",
@@ -16,10 +18,6 @@
     "require": {
         "php": "^7.4",
         "ext-json": "*",
-        "doctrine/annotations": "^1.10",
-        "monolog/monolog": "^2.0",
-        "psr/http-factory": "^1.0",
-        "psr/http-message": "^1.0",
         "symfony/options-resolver": "^5.0",
         "symfony/string": "^5.0",
         "symfony/var-dumper": "^5.0"
@@ -33,7 +31,8 @@
             "Mainframe\\Utils\\": "./src/"
         },
         "files": [
-            "./src/functions.php"
+            "./src/functions.php",
+            "./src/nsfunctions.php"
         ]
     },
     "autoload-dev": {
