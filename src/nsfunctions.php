@@ -12,11 +12,9 @@ namespace Mainframe\Utils;
 use Mainframe\Utils\Helper\Str;
 use Mainframe\Utils\Strings\MString;
 
-
 /**
  * //--[ String and Text Related Functions ]--//
  */
-
 
 function str($val): MString
 {

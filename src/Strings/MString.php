@@ -9,9 +9,20 @@
  */
 namespace Mainframe\Utils\Strings;
 
+use Mainframe\Utils\Helper\Str;
 use Symfony\Component\String\UnicodeString;
 
 class MString extends UnicodeString
 {
+    public static function create($val): MString
+    {
+        return new MString((string)value_of($val));
+    }
 
+    public function sluggify($maxlen = null): MString
+    {
+        return static::create(Str::sluggify((string)$this, $maxlen));
+    }
+
+    
 }
