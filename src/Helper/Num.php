@@ -47,4 +47,6 @@ class Num
         }
         return 0.0;
     }
+
+    // @todo add some methods for formatting using
 }

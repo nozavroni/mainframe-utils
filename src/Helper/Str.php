@@ -16,12 +16,6 @@ use function Symfony\Component\String\u;
 
 class Str
 {
-    // some methods for string comparison
-    const BY_CHARACTERS = 'cmp_chars';
-    const BY_LEVENSTEIN = 'cmp_levenstein';
-    const BY_SOUNDEX = 'cmp_soundex';
-    const BY_METAPHONE = 'cmp_metaphone';
-
     const SLUG_DELIM = '-';
 
     public static function template($template, array $context, string $repl_format = '%s')
@@ -85,31 +79,31 @@ class Str
         return new MString(u($value));
     }
 
-    public static function compare()
-    {
-
-    }
-
-    /**
-     * Returns similarity percentage
-     *
-     * @param null $algo
-     * @return int
-     */
-    public static function similarity(string $word, string $compareWord, $algo = null): int
-    {
-        if (is_null($algo)) {
-            $algo = static::BY_CHARACTERS;
-        }
-
-        if (is_string($algo) && method_exists(Str::class, $algo)) {
-            $algo = Closure::fromCallable([Str::class, $algo]);
-        } elseif (is_callable($algo)) {
-            $algo = Closure::fromCallable($algo);
-        } else {
-            InvalidArgumentException::raise('"%s" is not a valid similarity algorithm');
-        }
-    }
+//    public static function compare()
+//    {
+//
+//    }
+//
+//    /**
+//     * Returns similarity percentage
+//     *
+//     * @param null $algo
+//     * @return int
+//     */
+//    public static function similarity(string $word, string $compareWord, $algo = null): int
+//    {
+//        if (is_null($algo)) {
+//            $algo = static::BY_CHARACTERS;
+//        }
+//
+//        if (is_string($algo) && method_exists(Str::class, $algo)) {
+//            $algo = Closure::fromCallable([Str::class, $algo]);
+//        } elseif (is_callable($algo)) {
+//            $algo = Closure::fromCallable($algo);
+//        } else {
+//            InvalidArgumentException::raise('"%s" is not a valid similarity algorithm');
+//        }
+//    }
 
     public static function sluggify($val, $maxlen = null)
     {
@@ -125,24 +119,24 @@ class Str
 
     // these functions allow us to compare strings using a common interface
 
-    function cmp_chars()
-    {
-
-    }
-
-    function cmp_levenstein()
-    {
-
-    }
-
-    function cmp_soundex()
-    {
-
-    }
-
-    function cmp_metaphone()
-    {
-
-    }
+//    function cmp_chars()
+//    {
+//
+//    }
+//
+//    function cmp_levenstein()
+//    {
+//
+//    }
+//
+//    function cmp_soundex()
+//    {
+//
+//    }
+//
+//    function cmp_metaphone()
+//    {
+//
+//    }
 
 }

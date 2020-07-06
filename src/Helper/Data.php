@@ -163,21 +163,21 @@ class Data
         }
     }
 
-    /**
-     * Creates a string similarity sort function (closure)
-     *
-     * @param $str_cmp string The string to compare against
-     * @param $str_a string The first string to compare
-     * @param $str_b string The second string to compare
-     *
-     * @return Closure
-     */
-    public static function similarity_sorter($str_cmp): Closure
-    {
-        $sorter = function ($a, $b) use ($str_cmp) {
-            $sim_a = Str::similarity($str_cmp, $a);
-            $sim_b = Str::similarity($str_cmp, $b);
-        };
-    }
+//    /**
+//     * Creates a string similarity sort function (closure)
+//     *
+//     * @param $str_cmp string The string to compare against
+//     * @param $str_a string The first string to compare
+//     * @param $str_b string The second string to compare
+//     *
+//     * @return Closure
+//     */
+//    public static function similarity_sorter($str_cmp): Closure
+//    {
+//        $sorter = function ($a, $b) use ($str_cmp) {
+//            $sim_a = Str::similarity($str_cmp, $a);
+//            $sim_b = Str::similarity($str_cmp, $b);
+//        };
+//    }
 
 }
