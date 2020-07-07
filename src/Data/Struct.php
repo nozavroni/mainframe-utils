@@ -2,22 +2,40 @@
 namespace Mainframe\Utils\Data;
 
 use ArrayAccess;
-use ArrayIterator;
+use ArrayObject;
 use Countable;
 use Exception;
 use IteratorAggregate;
+use Mainframe\Utils\Helper\Data;
 use Serializable;
 use Traversable;
 
 /**
- * A struct is essentially an array on steroids. It does not have all the features of a collection, but it
- * does have the most commonly used methods you will find in the collection. Methods like get(), set(), clear(),
- * delete(), toArray(), serializing methods, getIterator(), count(), ArrayAccess methods, keys(), values(), and
- * various other simple, essential methods.
+ * A container is essentially just the base class for all the other data structures
  */
-class Container implements ArrayAccess, Countable, IteratorAggregate, Serializable
+class
+    Struct
+implements
+    AccessorsInterface,
+    StructInterface,
+    ArrayAccess,
+    Countable,
+    IteratorAggregate,
+    Serializable
 {
+
     use Traits\Accessors;
+
+    protected $storage;
+
+    /**
+     * Struct constructor.
+     * @param $input
+     */
+    public function __construct($input)
+    {
+        $this->storage = new ArrayObject(Data::toArray($input));
+    }
 
     /**
      * Retrieve an external iterator
@@ -28,7 +46,12 @@ class Container implements ArrayAccess, Countable, IteratorAggregate, Serializab
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->items);
+        $gen = function ($storage) {
+            foreach ($storage as $key => $val) {
+                yield $key => $val;
+            }
+        };
+        return $gen($this->storage);
     }
 
     /**
