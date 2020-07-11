@@ -9,7 +9,12 @@
  */
 namespace Mainframe\Utils\Data;
 
-class Collection extends Struct
+interface StackableInterface
 {
-    use Traits\Sortable;
+    public function push($item): int;
+    public function pop();
+    public function unshift($itemn): int;
+    public function shift();
+    public function peekLeft();
+    public function peekRight();
 }

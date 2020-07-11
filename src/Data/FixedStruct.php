@@ -10,6 +10,7 @@
  */
 namespace Mainframe\Utils\Data;
 
+use Mainframe\Utils\Exception\LengthException;
 use Mainframe\Utils\Helper\Data;
 use SplFixedArray;
 
@@ -24,6 +25,11 @@ class FixedStruct extends Struct
      */
     public function __construct($input, ?int $size = null)
     {
+        if ($size > count($input)) {
+            LengthException::raise(
+                'Too many items for fixed size data structure'
+            );
+        }
         $this->storage = SplFixedArray::fromArray(Data::toArray($input));
         if (!is_null($size)) {
             $this->storage->setSize($size);

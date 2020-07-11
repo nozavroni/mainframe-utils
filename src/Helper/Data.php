@@ -77,6 +77,28 @@ class Data
         return $default;
     }
 
+    public static function random($data)
+    {
+        return static::getByPos($data, rand(1, count($data)));
+    }
+
+    public static function assert($data, ?callable $func = null, $expected = true): bool
+    {
+        $index = 0;
+        foreach (static::toArray($data) as $key => $val) {
+            // @tests needed
+            if (is_null($func)) {
+                if ($val != $expected) {
+                    return false;
+                }
+            } elseif (value_of($func, $val, $key, $index++) !== $expected) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Get the nth item in the data
      *

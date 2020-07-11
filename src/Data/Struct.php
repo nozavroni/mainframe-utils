@@ -17,6 +17,7 @@ class
     Struct
 implements
     AccessorsInterface,
+    StackableInterface,
     StructInterface,
     ArrayAccess,
     Countable,
@@ -24,7 +25,9 @@ implements
     Serializable
 {
 
-    use Traits\Accessors;
+    use Traits\Accessors,
+        Traits\ArrayAccessors,
+        Traits\Stackable;
 
     protected $storage;
 
@@ -35,6 +38,19 @@ implements
     public function __construct($input)
     {
         $this->storage = new ArrayObject(Data::toArray($input));
+    }
+
+    /**
+     * Get the internal data storage
+     *
+     * This is essentially just to avoid having to define an $items array on all my traits. This allows
+     * me the flexibility to definte how I want my data stored in the class rather than the trait.
+     *
+     * @return mixed
+     */
+    protected function getStorage()
+    {
+        return $this->storage;
     }
 
     /**
@@ -55,71 +71,13 @@ implements
     }
 
     /**
-     * Whether a offset exists
-     * @link https://php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset <p>
-     * An offset to check for.
-     * </p>
-     * @return bool true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
-     */
-    public function offsetExists($offset)
-    {
-        return $this->has($offset);
-    }
-
-    /**
-     * Offset to retrieve
-     * @link https://php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset <p>
-     * The offset to retrieve.
-     * </p>
-     * @return mixed Can return all value types.
-     */
-    public function offsetGet($offset)
-    {
-        return $this->get($offset);
-    }
-
-    /**
-     * Offset to set
-     * @link https://php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset <p>
-     * The offset to assign the value to.
-     * </p>
-     * @param mixed $value <p>
-     * The value to set.
-     * </p>
-     * @return void
-     */
-    public function offsetSet($offset, $value)
-    {
-        $this->set($offset, $value);
-    }
-
-    /**
-     * Offset to unset
-     * @link https://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset <p>
-     * The offset to unset.
-     * </p>
-     * @return void
-     */
-    public function offsetUnset($offset)
-    {
-        $this->delete($offset);
-    }
-
-    /**
      * String representation of object
      * @link https://php.net/manual/en/serializable.serialize.php
      * @return string the string representation of the object or null
      */
     public function serialize()
     {
-        return serialize($this->items);
+        return serialize($this->storage);
     }
 
     /**
@@ -132,7 +90,7 @@ implements
      */
     public function unserialize($serialized)
     {
-        $this->items = unserialize($serialized);
+        $this->storage = unserialize($serialized);
     }
 
     /**
@@ -145,6 +103,7 @@ implements
      */
     public function count()
     {
-        return count($this->items);
+        return count($this->storage);
     }
+
 }

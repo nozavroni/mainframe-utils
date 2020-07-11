@@ -9,6 +9,7 @@
  */
 namespace Mainframe\Utils\Data;
 
+use Mainframe\Utils\Helper\Data;
 use SplFixedArray;
 
 /**
@@ -19,10 +20,21 @@ class Pair extends Tuple
     public function __construct($name, $value)
     {
         $this->storage = SplFixedArray::fromArray([$name, $value]);
+        $this->storage->setSize(2);
     }
 
     public function pivot()
     {
-        return [$this[0] => $this[1]];
+        return [$this->getKey() => $this->getValue()];
+    }
+
+    public function getKey()
+    {
+        return Data::getByPos($this->storage, 1);
+    }
+
+    public function getValue()
+    {
+        return Data::getByPos($this->storage, 2);
     }
 }

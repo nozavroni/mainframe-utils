@@ -9,7 +9,9 @@
  */
 namespace Mainframe\Utils\Data;
 
-class Collection extends Struct
+interface HashableInterface
 {
-    use Traits\Sortable;
+    public function equals($obj): bool;
+
+    public function hash(): string;
 }
