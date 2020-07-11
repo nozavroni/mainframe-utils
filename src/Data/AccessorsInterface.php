@@ -1,7 +1,7 @@
 <?php
 namespace Mainframe\Utils\Data;
 
-interface ContainerInterface
+interface AccessorsInterface
 {
     /**
      * Get an item by name (dot-notation supported)

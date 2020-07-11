@@ -10,9 +10,9 @@
 namespace Mainframe\Utils\Helper;
 
 use ArrayAccess;
-use Closure;
 use Mainframe\Utils\Exception\InvalidArgumentException;
 use Mainframe\Utils\Exception\OutOfBoundsException;
+use Mainframe\Utils\Exception\OutOfRangeException;
 use function Mainframe\Utils\str;
 
 class Data
@@ -41,7 +41,7 @@ class Data
         }
 
         if (!is_array($data)) {
-            $data = to_array($data);
+            $data = static::toArray($data, true);
         }
 
         if (array_key_exists($path, $data)) {
@@ -67,12 +67,82 @@ class Data
             }
         }
 
-        if (func_num_args() < 3) {
-            // unless all the args were passed in, then no default was provided
-            throw new OutOfBoundsException(sprintf('No item found in data for "%s"', $path));
-        }
+        // unless all the args were passed in, then no default was provided
+        OutOfBoundsException::raiseIf(
+            func_num_args() < 3,
+            'No item found in data for "%s"',
+            [ $path, ]
+        );
 
         return $default;
+    }
+
+    public static function random($data)
+    {
+        return static::getByPos($data, rand(1, count($data)));
+    }
+
+    public static function assert($data, ?callable $func = null, $expected = true): bool
+    {
+        $index = 0;
+        foreach (static::toArray($data) as $key => $val) {
+            // @tests needed
+            if (is_null($func)) {
+                if ($val != $expected) {
+                    return false;
+                }
+            } elseif (value_of($func, $val, $key, $index++) !== $expected) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the nth item in the data
+     *
+     * @param iterable $data The data to positionally retrieve an item from
+     * @param int $pos The position (from 1)
+     */
+    public static function getByPos($data, int $pos, $default = null)
+    {
+        return OutofRangeException::recover(
+            function () use ($data, $pos) {
+                return Data::get($data, static::getKeyByPos($data, $pos));
+            },
+            $default
+        );
+    }
+
+    /**
+     * Get the nth item in the data
+     *
+     * @param iterable $data The data to positionally retrieve an item from
+     * @param int $pos The position (from 1)
+     */
+    public static function getKeyByPos($data, int $pos)
+    {
+        if (!is_array($data)) {
+            $data = static::toArray($data, true);
+        }
+
+        $total = count($data);
+        if ($pos < 0) {
+            $pos = $total - abs($pos) + 1;
+        }
+
+        if ($pos >= 0) {
+            $cur = 1;
+            foreach ($data as $key => $val) {
+                if ($cur === $pos) {
+                    return $key;
+                }
+                $cur++;
+            }
+        }
+
+        OutOfRangeException::raise('No key at position %s', [$pos]);
     }
 
     /**
@@ -102,19 +172,17 @@ class Data
             $delim = static::DELIM;
         }
 
-        if (!is_array($data) && !($data instanceof ArrayAccess)) {
-            throw new InvalidArgumentException(sprintf(
-                'Unknown or invalid data structure passed to "%s": expecting an array or iterable, got "%s"',
-                __FUNCTION__,
-                typeof($data)
-            ));
-        }
+        InvalidArgumentException::raiseUnless(
+            is_array($data) || $data instanceof ArrayAccess,
+            'Unknown or invalid data structure passed to "%s": expecting an array or iterable, got "%s"',
+            [ __METHOD__, typeof($data) ]
+        );
 
         $arr = &$data;
         $p = str($path);
         if ($p->indexOf($delim)) {
             foreach ($p->split($delim) as $key) {
-                $k = (string) $key;
+                $k = (string)$key;
                 if (!isset($arr[$k]) || !is_array($arr[$k])) {
                     $arr[$k] = array();
                 }
@@ -132,13 +200,11 @@ class Data
             $delim = static::DELIM;
         }
 
-        if (!is_array($data) && !($data instanceof ArrayAccess)) {
-            throw new InvalidArgumentException(sprintf(
-                'Unknown or invalid data structure passed to "%s": expecting an array or iterable, got "%s"',
-                __FUNCTION__,
-                typeof($data)
-            ));
-        }
+        InvalidArgumentException::raiseUnless(
+            is_array($data) || $data instanceof ArrayAccess,
+            'Unknown or invalid data structure passed to "%s": expecting an array or iterable, got "%s"',
+            [ __METHOD__, typeof($data) ]
+        );
 
         $arr = &$data;
         $p = str($path);
@@ -161,6 +227,54 @@ class Data
         } else {
             unset($arr[$path]);
         }
+    }
+
+    public static function clear(&$items)
+    {
+        if (is_array($items)) {
+            $items = [];
+        }
+
+        if (is_object($items)) {
+            if (method_exists($items, 'clear')) {
+                $items->clear();
+                return $items;
+            }
+        }
+    }
+
+    public static function toArray($items, $force = false): array
+    {
+        if (is_array($items)) {
+            return $items;
+        }
+
+        // if items is an object...
+        if (is_object($items)) {
+            // try a few different ways to convert it...
+            if (method_exists($items, 'toArray')) {
+                return $items->toArray();
+            }
+            if (is_iterable($items)) {
+                return iterator_to_array($items);
+            }
+            return get_object_vars($items);
+        }
+
+        // if not an object
+        if (is_null($items)) {
+            return [];
+        }
+
+        if ($force) {
+            return (array)$items;
+        }
+
+        // @todo need to test for cases when this is thrown
+        InvalidArgumentException::raise(
+            '%s was unable to convert value of type "%s" into an array',
+            [  __METHOD__, typeof($items) ]
+        );
     }
 
 //    /**

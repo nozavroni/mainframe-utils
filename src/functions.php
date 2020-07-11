@@ -468,37 +468,7 @@ if (!function_exists('to_array')) {
      */
     function to_array($items, $force = false): array
     {
-        if (is_array($items)) {
-            return $items;
-        }
-
-        // if items is an object...
-        if (is_object($items)) {
-            // try a few different ways to convert it...
-            if (method_exists($items, 'toArray')) {
-                return $items->toArray();
-            }
-            if (is_iterable($items)) {
-                return iterator_to_array($items);
-            }
-            return get_object_vars($items);
-        }
-
-        // if not an object
-        if (is_null($items)) {
-            return [];
-        }
-
-        if ($force) {
-            return (array)$items;
-        }
-
-        // @todo need to test for cases when this is thrown
-        throw new InvalidArgumentException(sprintf(
-            '%s was unable to convert value of type "%s" into an array',
-            __FUNCTION__,
-            typeof($items)
-        ));
+        return \Mainframe\Utils\Helper\Data::toArray($items, $force);
     }
 
 }

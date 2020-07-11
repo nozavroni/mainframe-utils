@@ -10,11 +10,12 @@
  */
 namespace Mainframe\Utils\Options;
 
+use Mainframe\Utils\Helper\Data;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 trait OptionsAware
-{
-    /** @var array The options array */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    /** @var array The options array */
     protected array $options = [];
 
     /**
@@ -49,7 +50,7 @@ trait OptionsAware
      */
     public function getOption($name)
     {
-        return data_get($this->options, $name);
+        return Data::get($this->options, $name);
     }
 
     /**

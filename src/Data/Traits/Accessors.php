@@ -13,9 +13,58 @@ use Mainframe\Utils\Helper\Data;
 
 trait Accessors
 {
-    /** @var array The data source */
-    protected array $items = [];
+//    /** @var array The data source */
+//    protected $items = [];
 
+    /**
+     * Get the internal data storage
+     *
+     * This is essentially just to avoid having to define an $items array on all my traits. This allows
+     * me the flexibility to definte how I want my data stored in the class rather than the trait.
+     *
+     * @return mixed
+     */
+    abstract protected function getStorage();
+
+    /**
+     * Is the container empty?
+     *
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        // TODO: Implement isEmpty() method.
+    }
+
+    /**
+     * Get values as an array
+     *
+     * @return array
+     */
+    public function values(): array
+    {
+        // TODO: Implement values() method.
+    }
+
+    /**
+     * Get keys as an array
+     *
+     * @return array
+     */
+    public function keys(): array
+    {
+        // TODO: Implement keys() method.
+    }
+
+    /**
+     * Return an array of key/value pairs
+     *
+     * @return array
+     */
+    public function pairs(): array
+    {
+        // TODO: Implement pairs() method.
+    }
     /**
      * Get a value by key or dot-notation path
      *
@@ -32,7 +81,7 @@ trait Accessors
      * Set a value by key / dot notation path
      *
      * @param mixed $value The value to set it to
-     * @return \Mainframe\Utils\Data\Container
+     * @return $this
      */
     public function set($key = null, $value = null, $overwrite = true)
     {
@@ -86,14 +135,25 @@ trait Accessors
         return $value;
     }
 
+    /**
+     * Get a random value from the collection
+     *
+     * @return mixed
+     */
+    // @todo put this into like maybe uhh... I dunno... maybe put it with getValueAt?
+//    public function random()
+//    {
+//        return $this->getValueAt(rand(1, $this->count()));
+//    }
+
     public function clear()
     {
-        $this->items = [];
+        Data::clear($this->items);
         return $this;
     }
 
     public function toArray(): array
     {
-        return $this->items;
+        return Data::toArray($this->items);
     }
 }
