@@ -277,6 +277,19 @@ class Data
         );
     }
 
+    public static function isEmpty($data): bool
+    {
+        if (is_object($data)) {
+            if (method_exists($data, 'isEmpty')) {
+                return $data->isEmpty();
+            }
+            if (method_exists($data, 'count')) {
+                return $data->count() === 0;
+            }
+        }
+        return empty($data);
+    }
+
 //    /**
 //     * Creates a string similarity sort function (closure)
 //     *
