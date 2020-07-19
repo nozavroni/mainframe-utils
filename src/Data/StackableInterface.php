@@ -11,10 +11,10 @@ namespace Mainframe\Utils\Data;
 
 interface StackableInterface
 {
-    public function push($item): int;
-    public function pop();
-    public function unshift($itemn): int;
-    public function shift();
-    public function peekLeft();
-    public function peekRight();
+    public function top (  );
+    public function bottom (  );
+    public function push ( $value );
+    public function shift (  );
+    public function unshift ( $value );
+    public function pop (  );
 }

@@ -9,35 +9,45 @@
  */
 namespace Mainframe\Utils\Data\Traits;
 
+use Mainframe\Utils\Helper\Data;
+
 trait Stackable
 {
+    /** @var iterable The underlying items */
+    protected $items;
+
+    /**
+     * Pop an item off the end
+     *
+     * @return mixed
+     */
     public function pop()
     {
-        // TODO: Implement pop() method.
+        return array_pop($this->items);
     }
 
     public function unshift($item): int
     {
-        // TODO: Implement unshift() method.
+        return array_unshift($this->items, $item);
     }
 
     public function push($item): int
     {
-        // TODO: Implement unshift() method.
+        return array_push($this->items, $item);
     }
 
     public function shift()
     {
-        // TODO: Implement shift() method.
+        return array_shift($this->items);
     }
 
     public function peekLeft()
     {
-        // TODO: Implement peekLeft() method.
+        return Data::getByPos($this->items, 1);
     }
 
     public function peekRight()
     {
-        // TODO: Implement peekRight() method.
+        return Data::getByPos($this->items, -1);
     }
 }

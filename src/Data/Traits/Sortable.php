@@ -13,23 +13,7 @@ use Mainframe\Utils\Helper\Data;
 
 trait Sortable
 {
-    /**
-     * Shuffle (randomize) the order of this collection's values (in-place)
-     *
-     * @return Collection
-     */
-    public function shuffle()
-    {
-        $new = [];
-        $keys = array_keys($this->items);
-        shuffle($keys);
-        foreach ($keys as $key) {
-            $new[$key] = $this->items[$key];
-        }
-        $this->items = $new;
-
-        return $this;
-    }
+    protected $items;
 
     /**
      * Sort the collection by value (in-place)

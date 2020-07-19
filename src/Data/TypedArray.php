@@ -19,7 +19,7 @@ use SplFixedArray;
 /**
  * Essentially, in nearly any other language, an array would already be "typed". But since
  */
-class TypedArray extends Struct
+class TypedArray extends Index
 {
     const SCALARS = ['string','integer','boolean','float'];
 
@@ -27,7 +27,7 @@ class TypedArray extends Struct
 
     public static function create(string $type): TypedArray
     {
-        InvalidArgumentException::raiseUnless(
+        InvalidArgumentException::raiseUnless (
             class_exists($type) || in_array($type, static::SCALARS),
             'Invalid type "%s" for TypedArray. Must be a class/interface or a scalar ("%s").',
             [$type, implode('","', static::SCALARS)]
@@ -39,9 +39,10 @@ class TypedArray extends Struct
      * Struct constructor.
      * @param iterable $input
      * @param string|null $type
-     */
-    public function __construct($input, ?string $type = null)
+     */public function __construct($input, ?string $type = null)
     {
+        parent::__construct($input);
+
         if ($type === null) {
             $type = typeof(Data::getByPos($input, 1));
         }

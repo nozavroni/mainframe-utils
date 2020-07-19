@@ -10,6 +10,9 @@
 namespace Mainframe\Utils\Helper;
 
 use ArrayAccess;
+use ArrayObject;
+use Mainframe\Utils\Data\SortableInterface;
+use Mainframe\Utils\Exception\BadMethodCallException;
 use Mainframe\Utils\Exception\InvalidArgumentException;
 use Mainframe\Utils\Exception\OutOfBoundsException;
 use Mainframe\Utils\Exception\OutOfRangeException;
@@ -80,6 +83,16 @@ class Data
     public static function random($data)
     {
         return static::getByPos($data, rand(1, count($data)));
+    }
+
+    public static function reverse($data)
+    {
+        if (method_exists($data, 'reverse')) {
+            return $data->reverse();
+        }
+        if (is_array($data) || $data instanceof ArrayObject) {
+
+        }
     }
 
     public static function assert($data, ?callable $func = null, $expected = true): bool
@@ -277,6 +290,18 @@ class Data
         );
     }
 
+    /**
+     * In this context "index" refers to an array that is sequentially, numerically indexed
+     *
+     * @param $items
+     * @param bool $force
+     * @return array
+     */
+    public static function toIndex($items, $force = false): array
+    {
+        return array_values(Data::toArray($items, $force));
+    }
+
     public static function isEmpty($data): bool
     {
         if (is_object($data)) {
@@ -288,6 +313,25 @@ class Data
             }
         }
         return empty($data);
+    }
+
+    public static function first($data, ?callable $func, $default = null)
+    {
+        $data = Data::toArray($data);
+        $index = 0;
+        foreach ($data as $key => $val) {
+            if (is_null($func) || value_of($func, $val, $key, $index++)) {
+                return $val;
+            }
+        }
+
+        BadMethodCallException::raiseIf (
+            func_num_args() < 3,
+            "%s failed to find any values that predicate its callback and was not provided a default",
+            [ __METHOD__ ]
+        );
+
+        return $default;
     }
 
 //    /**

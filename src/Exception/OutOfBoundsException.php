@@ -9,6 +9,9 @@
  */
 namespace Mainframe\Utils\Exception;
 
+/**
+ * Exception thrown if a value is not a valid key. This represents errors that cannot be detected at compile time.
+ */
 class OutOfBoundsException extends \OutOfBoundsException implements RaisableInterface, RecoverableInterface, SuppressableInterface
 {
     use Traits\Raisable,

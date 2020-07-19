@@ -10,12 +10,14 @@
 namespace Mainframe\Utils\Data;
 
 use Mainframe\Utils\Data\Exception\ImmutableException;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Mainframe\Utils\Exception\InvalidArgumentException;
 
 /**
  * An immutable fixed container with only numeric indexes
+ * @todo This should probably extend Index or implement IndexInterface rather than FixedStruct. Or
+ *       perhaps there should also be a FixedIndex that it extends from.
  */
-class Tuple extends FixedStruct
+class Tuple extends FixedIndex
 {
     /**
      * Set a value by key / dot notation path

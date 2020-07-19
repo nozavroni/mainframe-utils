@@ -42,8 +42,8 @@ class ContainerTest extends MainframeTestCase
         $this->assertEquals('none', $val, 'Testing to ensure that default was returned (meaning an exception was suppressed)');
 
         $val = InvalidStructureException::recover(function() {
-            $a = new TypedArray();
-            $a->push();
+            $a = TypedArray::create('string');
+            $a->push(4);
             return $a;
         }, 'none');
 

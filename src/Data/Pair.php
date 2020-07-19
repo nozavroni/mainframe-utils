@@ -9,6 +9,7 @@
  */
 namespace Mainframe\Utils\Data;
 
+use Mainframe\Utils\Exception\InvalidArgumentException;
 use Mainframe\Utils\Helper\Data;
 use SplFixedArray;
 
@@ -17,10 +18,10 @@ use SplFixedArray;
  */
 class Pair extends Tuple
 {
-    public function __construct($name, $value)
+    public function __construct($key, $value)
     {
-        $this->storage = SplFixedArray::fromArray([$name, $value]);
-        $this->storage->setSize(2);
+        InvalidArgumentException::raiseUnless(is_scalar($key));
+        parent::__construct(2, [$key, $value]);
     }
 
     public function pivot()
@@ -30,11 +31,11 @@ class Pair extends Tuple
 
     public function getKey()
     {
-        return Data::getByPos($this->storage, 1);
+        return $this->offsetGet(0);
     }
 
     public function getValue()
     {
-        return Data::getByPos($this->storage, 2);
+        return $this->offsetGet(1);
     }
 }
