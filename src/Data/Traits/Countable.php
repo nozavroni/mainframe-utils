@@ -9,8 +9,12 @@
  */
 namespace Mainframe\Utils\Data\Traits;
 
+use Mainframe\Utils\Exception\BadMethodCallException;
+
 trait Countable
 {
+    protected $storage;
+
     /**
      * Count elements of an object
      * @link https://php.net/manual/en/countable.count.php
@@ -21,6 +25,15 @@ trait Countable
      */
     public function count()
     {
-        return count($this->storage);
+        if ($this->storage instanceof \Countable) {
+            return count($this->storage);
+        }
+        $alts = ['size','getsize','count','length'];
+        foreach ($alts as $alt) {
+            if (method_exists($this->storage, $alt)) {
+                return $this->storage->$alt();
+            }
+        }
+        BadMethodCallException::raise('Unable to determine count');
     }
 }

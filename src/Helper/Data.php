@@ -74,7 +74,7 @@ class Data
         OutOfBoundsException::raiseIf(
             func_num_args() < 3,
             'No item found in data for "%s"',
-            [ $path, ]
+            [$path,]
         );
 
         return $default;
@@ -188,7 +188,7 @@ class Data
         InvalidArgumentException::raiseUnless(
             is_array($data) || $data instanceof ArrayAccess,
             'Unknown or invalid data structure passed to "%s": expecting an array or iterable, got "%s"',
-            [ __METHOD__, typeof($data) ]
+            [__METHOD__, typeof($data)]
         );
 
         $arr = &$data;
@@ -216,7 +216,7 @@ class Data
         InvalidArgumentException::raiseUnless(
             is_array($data) || $data instanceof ArrayAccess,
             'Unknown or invalid data structure passed to "%s": expecting an array or iterable, got "%s"',
-            [ __METHOD__, typeof($data) ]
+            [__METHOD__, typeof($data)]
         );
 
         $arr = &$data;
@@ -256,6 +256,38 @@ class Data
         }
     }
 
+    /**
+     * Determine if data contains given value
+     *
+     * Checks the data for an item exactly equal to $value. If $value is a callback function, it will be passed
+     * the typical arguments ($value, $key, $index) and a true return value will count as a match.
+     *
+     * If $key argument is provided, key must match it as well. By default key is not required.
+     *
+     * @param mixed|callable $value The value to check for or a callback function
+     * @param mixed $key The key to check for in addition to the value (optional)
+     *
+     * @return bool
+     */
+    public static function contains($items, $value, $key = null)
+    {
+        $items = static::toArray($items);
+        $i = 0;
+        foreach ($items as $k => $v) {
+            $matchkey = is_null($key) || $key === $k;
+            if (is_callable($value)) {
+                if (value_of($value, $v, $k, $i)) {
+                    return $matchkey;
+                }
+            } else {
+                if ($value === $v) {
+                    return $matchkey;
+                }
+            }
+            $i++;
+        }
+    }
+
     public static function toArray($items, $force = false): array
     {
         if (is_array($items)) {
@@ -286,7 +318,7 @@ class Data
         // @todo need to test for cases when this is thrown
         InvalidArgumentException::raise(
             '%s was unable to convert value of type "%s" into an array',
-            [  __METHOD__, typeof($items) ]
+            [__METHOD__, typeof($items)]
         );
     }
 
@@ -300,6 +332,22 @@ class Data
     public static function toIndex($items, $force = false): array
     {
         return array_values(Data::toArray($items, $force));
+    }
+
+    /**
+     * Converts an iterable to a generator
+     *
+     * @param iterable|null $items
+     * @return \Closure
+     */
+    public static function toGenerator($items)
+    {
+        $items = static::toArray($items);
+        return function () use ($items) {
+            foreach ($items as $key => $val) {
+                yield $key => $val;
+            }
+        };
     }
 
     public static function isEmpty($data): bool
@@ -317,7 +365,11 @@ class Data
 
     public static function first($data, ?callable $func, $default = null)
     {
-        $data = Data::toArray($data);
+        InvalidArgumentException::raiseUnless(
+            is_iterable($data),
+            'Cannot get first item from data structure, as it is not iterable'
+        );
+
         $index = 0;
         foreach ($data as $key => $val) {
             if (is_null($func) || value_of($func, $val, $key, $index++)) {
@@ -325,13 +377,61 @@ class Data
             }
         }
 
-        BadMethodCallException::raiseIf (
+        BadMethodCallException::raiseIf(
             func_num_args() < 3,
             "%s failed to find any values that predicate its callback and was not provided a default",
-            [ __METHOD__ ]
+            [__METHOD__]
         );
 
-        return $default;
+        return value_of($default);
+    }
+
+    public static function last($data, ?callable $func, $default = null)
+    {
+        InvalidArgumentException::raiseUnless(
+            is_iterable($data),
+            'Cannot get first item from data structure, as it is not iterable'
+        );
+
+        if ($data instanceof \SplDoublyLinkedList) {
+            // set it to iterate from the other end
+            $data->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO);
+        } else {
+            if (method_exists($data, 'reverse')) {
+                $data = $data->reverse();
+            } else {
+                $data = array_reverse(static::toArray($data));
+            }
+        }
+
+        $args = [$data, $func];
+        if ($def = func_get_arg(2)) {
+            // we only want to send a default if one was provided explicitly even if it was null
+            $args[] = $def;
+        }
+        return static::first(...$args);
+    }
+
+    /**
+     * Get keys from array or iterable
+     *
+     * @param ?iterable $data The data to get keys from
+     * @return array
+     */
+    public static function keys($data)
+    {
+        return array_keys(Data::toArray($data));
+    }
+
+    /**
+     * Get keys from array or iterable
+     *
+     * @param ?iterable $data The data to get keys from------------------------==-
+     * @return array
+     */
+    public static function values($data)
+    {
+        return Data::toIndex($data);
     }
 
 //    /**

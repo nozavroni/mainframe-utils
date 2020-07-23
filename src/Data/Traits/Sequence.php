@@ -9,36 +9,13 @@
  */
 namespace Mainframe\Utils\Data\Traits;
 
-use Mainframe\Utils\Data\IndexInterface;
+use Mainframe\Utils\Data\Index;
 use Mainframe\Utils\Exception\OutOfBoundsException;
 use Mainframe\Utils\Helper\Data;
 
 trait Sequence
 {
-    protected $storage;
-
-    /**
-     * Get a value by offset (from zero)
-     *
-     * @param int $pos The position (starting from 0 and can be negative to start from the end)
-     * @param null $default The value to return if no item at requested position
-     * @return mixed
-     */
-    public function getOffset($pos, $default = null)
-    {
-        if ($pos < 0) {
-            $pos = count($this->storage) + $pos;
-        }
-        $i = 0;
-        $items = Data::toArray($this->storage);
-        foreach ($items as $item) {
-            if ($pos === $i) {
-                return $item;
-            }
-            $i++;
-        }
-        return $default;
-    }
+    abstract public function count();
 
     /**
      * Get a slice of this index
@@ -46,9 +23,9 @@ trait Sequence
      *
      * @param int $offset The offset to start at
      * @param null $length The length (or if negative, the end position)
-     * @return IndexInterface
+     * @return Index
      */
-    public function slice($offset, $length = null): IndexInterface
+    public function slice($offset, $length = null): Index
     {
         // TODO: Implement slice() method.
     }
@@ -59,10 +36,10 @@ trait Sequence
      *
      * @param int $offset The offset to start at
      * @param null $length The length (or if negative, the end position)
-     * @param IndexInterface $index The index to splice into this index
-     * @return IndexInterface
+     * @param Index $index The index to splice into this index
+     * @return Index
      */
-    public function splice($offset, $length, iterable $items): IndexInterface
+    public function splice($offset, $length, iterable $items): Index
     {
         // TODO: Implement splice() method.
     }
@@ -83,37 +60,11 @@ trait Sequence
      * Get an index of numeric offsets of each item that matches $value
      *
      * @param mixed $value The value to get the indexes of
-     * @return IndexInterface
+     * @return Index
      */
-    public function indexes($value): IndexInterface
+    public function indexes($value): Index
     {
         // TODO: Implement indexes() method.
-    }
-
-    /**
-     * Prepend any number of items into this index
-     * Implementers should Data::toArray() $items in order to always prepend an iterable even
-     * if a scalar was provided.
-     *
-     * @param iterable|mixed $items
-     * @return IndexInterface
-     */
-    public function prepend($items): IndexInterface
-    {
-        // TODO: Implement prepend() method.
-    }
-
-    /**
-     * Append any number of items into this index
-     * Implementers should Data::toArray() $items in order to always append an iterable even
-     * if a scalar was provided.
-     *
-     * @param iterable|mixed $items
-     * @return IndexInterface
-     */
-    public function append($items): IndexInterface
-    {
-        // TODO: Implement append() method.
     }
 
     /**
@@ -129,7 +80,7 @@ trait Sequence
      */
     public function first(?callable $predicate = null, $default = null)
     {
-        // TODO: Implement first() method.
+        return Data::first($this, $predicate, $default);
     }
 
     /**
@@ -145,7 +96,7 @@ trait Sequence
      */
     public function last(?callable $predicate = null, $default = null)
     {
-        // TODO: Implement last() method.
+        return Data::last($this, $predicate, $default);
     }
 
 }

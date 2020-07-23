@@ -9,9 +9,11 @@
  */
 namespace Mainframe\Utils\Data;
 
-use Mainframe\Utils\Data\Exception\InvalidStructureException;
-
-interface StructInterface
+/**
+ * I'm sure to implement a trie I'll need more than just one class and probably wont even need
+ * one that is actually called "Trie" but we'll see I guess...
+ */
+class Trie
 {
 
 }

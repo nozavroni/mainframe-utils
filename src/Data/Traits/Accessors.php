@@ -13,18 +13,7 @@ use Mainframe\Utils\Helper\Data;
 
 trait Accessors
 {
-//    /** @var array The data source */
-//    protected $items = [];
-
-    /**
-     * Get the internal data storage
-     *
-     * This is essentially just to avoid having to define an $items array on all my traits. This allows
-     * me the flexibility to definte how I want my data stored in the class rather than the trait.
-     *
-     * @return mixed
-     */
-    abstract protected function getStorage();
+    protected $storage;
 
     /**
      * Is the container empty?
@@ -33,7 +22,7 @@ trait Accessors
      */
     public function isEmpty(): bool
     {
-        // TODO: Implement isEmpty() method.
+        return Data::isEmpty($this->storage);
     }
 
     /**
@@ -43,7 +32,7 @@ trait Accessors
      */
     public function values(): array
     {
-        // TODO: Implement values() method.
+        return Data::values($this->storage);
     }
 
     /**
@@ -53,7 +42,7 @@ trait Accessors
      */
     public function keys(): array
     {
-        // TODO: Implement keys() method.
+        return Data::keys($this->storage);
     }
 
     /**
