@@ -9,6 +9,6 @@
  */
 namespace Mainframe\Utils\Exception;
 
-class AssertionFailedException extends \RangeException
+class AssertionException extends \RangeException
 {
 }
