@@ -9,12 +9,11 @@
  */
 namespace Mainframe\Utils\Data;
 
-interface StackableInterface
+/**
+ * I'm sure to implement a trie I'll need more than just one class and probably wont even need
+ * one that is actually called "Trie" but we'll see I guess...
+ */
+class Trie
 {
-    public function push($item): int;
-    public function pop();
-    public function unshift($itemn): int;
-    public function shift();
-    public function peekLeft();
-    public function peekRight();
+
 }

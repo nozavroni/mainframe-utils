@@ -9,7 +9,13 @@
  */
 namespace Mainframe\Utils\Data;
 
-class Collection extends Struct
+class Collection implements \ArrayAccess
 {
-    use Traits\Sortable;
+    use Traits\ArrayAccessors,
+        Traits\Accessors,
+        Traits\Countable,
+        Traits\Stackable,
+        Traits\Sequence,
+        Traits\Randomable,
+        Traits\Sortable;
 }

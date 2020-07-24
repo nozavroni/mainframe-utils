@@ -13,18 +13,8 @@ use Mainframe\Utils\Helper\Data;
 
 trait ArrayAccessors
 {
-    // /** @var array The data source */
-    // protected $items = [];
-
-    /**
-     * Get the internal data storage
-     *
-     * This is essentially just to avoid having to define an $items array on all my traits. This allows
-     * me the flexibility to definte how I want my data stored in the class rather than the trait.
-     *
-     * @return mixed
-     */
-    abstract protected function getStorage();
+    /** @var array|\ArrayObject The data source */
+    protected $storage;
 
     /**
      * Whether a offset exists
@@ -39,7 +29,7 @@ trait ArrayAccessors
      */
     public function offsetExists($offset)
     {
-        return $this->has($offset);
+        return Data::has($this->storage, $offset);
     }
 
     /**
@@ -52,7 +42,7 @@ trait ArrayAccessors
      */
     public function offsetGet($offset)
     {
-        return $this->get($offset);
+        return Data::get($this->storage, $offset);
     }
 
     /**
@@ -68,7 +58,7 @@ trait ArrayAccessors
      */
     public function offsetSet($offset, $value)
     {
-        $this->set($offset, $value);
+        Data::set($this->storage, $offset, $value);
     }
 
     /**
@@ -81,7 +71,7 @@ trait ArrayAccessors
      */
     public function offsetUnset($offset)
     {
-        $this->delete($offset);
+        Data::delete($this->storage, $offset);
     }
 
 }

@@ -9,6 +9,9 @@
  */
 namespace Mainframe\Utils\Exception;
 
+/**
+ * Exception thrown when adding an element to a full container.
+ */
 class OverflowException extends \OverflowException implements RaisableInterface, RecoverableInterface, SuppressableInterface
 {
     use Traits\Raisable,

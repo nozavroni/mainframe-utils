@@ -9,35 +9,71 @@
  */
 namespace Mainframe\Utils\Data\Traits;
 
+use ArrayAccess;
+use Mainframe\Utils\Data\Exception\InvalidStructureException;
+use Mainframe\Utils\Helper\Data;
+
 trait Stackable
 {
+    /** @var iterable The underlying items */
+    protected $storage;
+
+    /**
+     * Pop an item off the end
+     *
+     * @return mixed
+     */
     public function pop()
     {
-        // TODO: Implement pop() method.
+        if (method_exists($this->storage, 'pop')) {
+            return $this->storage->pop();
+        }
+        if ($this->storage instanceof ArrayAccess || is_array($this->storage)) {
+            return array_pop($this->storage);
+        }
+        InvalidStructureException::raise('Storage for %s must allow %s', [__CLASS__, __FUNCTION__]);
     }
 
     public function unshift($item): int
     {
-        // TODO: Implement unshift() method.
+        if (method_exists($this->storage, 'unshift')) {
+            return $this->storage->unshift($item);
+        }
+        if ($this->storage instanceof ArrayAccess || is_array($this->storage)) {
+            return array_unshift($this->storage, $item);
+        }
+        InvalidStructureException::raise('Storage for %s must allow %s', [__CLASS__, __FUNCTION__]);
     }
 
     public function push($item): int
     {
-        // TODO: Implement unshift() method.
+        if (method_exists($this->storage, 'push')) {
+            return $this->storage->push($item);
+        }
+        if ($this->storage instanceof ArrayAccess || is_array($this->storage)) {
+            return array_push($this->storage, $item);
+        }
+        InvalidStructureException::raise('Storage for %s must allow %s', [__CLASS__, __FUNCTION__]);
     }
 
     public function shift()
     {
-        // TODO: Implement shift() method.
+        if (method_exists($this->storage, 'shift')) {
+            return $this->storage->shift();
+        }
+        if ($this->storage instanceof ArrayAccess || is_array($this->storage)) {
+            return array_shift($this->storage);
+        }
+        InvalidStructureException::raise('Storage for %s must allow %s', [__CLASS__, __FUNCTION__]);
     }
 
-    public function peekLeft()
+    public function top()
     {
-        // TODO: Implement peekLeft() method.
+        return Data::getByPos($this->storage, 1);
     }
 
-    public function peekRight()
+    public function bottom()
     {
-        // TODO: Implement peekRight() method.
+        return Data::getByPos($this->storage, -1);
     }
 }
