@@ -16,12 +16,12 @@ use SplFixedArray;
 /**
  * Essentially a two-item tuple, usually used to represent a key/value pair
  */
-class Pair extends Tuple
+class Pair extends Index
 {
     public function __construct($key, $value)
     {
         InvalidArgumentException::raiseUnless(is_scalar($key));
-        parent::__construct(2, [$key, $value]);
+        parent::__construct([$key, $value]);
     }
 
     public function pivot()
