@@ -12,6 +12,7 @@
 use Mainframe\Data\Collection;
 use Mainframe\Action\Exception\BreakException;
 use Mainframe\Action\Exception\FailedAttemptException;
+use function GuzzleHttp\Psr7\stream_for;
 use function Symfony\Component\String\u as str; // I think str is more useful
 
 /**
@@ -469,6 +470,21 @@ if (!function_exists('to_array')) {
     function to_array($items, $force = false): array
     {
         return \Mainframe\Utils\Helper\Data::toArray($items, $force);
+    }
+
+}
+
+if (!function_exists('to_stream')) {
+
+    /**
+     * Convert (almost) any value to a stream resource
+     *
+     * @param mixed $data The data to convert to stream
+     * @return resource
+     */
+    function to_stream($data, array $options = [])
+    {
+        return stream_for($data, $options);
     }
 
 }

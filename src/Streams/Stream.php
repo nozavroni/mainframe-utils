@@ -7,8 +7,11 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
-namespace Mainframe\Utils\Exception;
+namespace Mainframe\Utils\Streams;
 
-class AssertionException extends RangeException
+use GuzzleHttp\Psr7\Stream as BaseStream;
+
+class Stream extends BaseStream
 {
+
 }
