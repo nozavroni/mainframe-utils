@@ -288,6 +288,16 @@ class Data
         }
     }
 
+    public static function resolve($items): array
+    {
+        $resolved = [];
+        $items = static::toArray($items);
+        foreach ($items as $key => $val) {
+            $resolved[$key] = value_of($val);
+        }
+        return $resolved;
+    }
+
     public static function toArray($items, $force = false): array
     {
         if (is_array($items)) {
@@ -433,6 +443,11 @@ class Data
     {
         return Data::toIndex($data);
     }
+
+    /**
+     * METHODS for querying data within an associative array or similar data structure
+     * by string functions, arithmetic, etc.
+     */
 
 //    /**
 //     * Creates a string similarity sort function (closure)

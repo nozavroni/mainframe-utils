@@ -20,7 +20,8 @@
         "ext-json": "*",
         "symfony/options-resolver": "^5.0",
         "symfony/string": "^5.0",
-        "symfony/var-dumper": "^5.0"
+        "symfony/var-dumper": "^5.0",
+        "guzzlehttp/guzzle": "^7.0"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.9",
