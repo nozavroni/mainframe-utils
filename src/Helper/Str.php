@@ -15,7 +15,7 @@ use Mainframe\Utils\Strings\MString;
 use function Symfony\Component\String\u;
 
 class Str
-{wwwweetetewtewrtewrtwertewrtwertewrtewte
+{
     const SLUG_DELIM = '-';
 
     public static function template($template, array $context, string $repl_format = '%s')
@@ -26,7 +26,8 @@ class Str
                 return static::template($str, $context, $repl_format);
             }, $template);
         }
-        // @todo allow for defaults by using prqb"
+        // @todo allow for defaults by using preg_replace_callback and a repl_format like this:
+        //       "{%s:%s}" or "\b%s<%s>\b"
         return str_replace(
             array_map(
                 function ($key) use ($repl_format) {
@@ -125,37 +126,16 @@ class Str
 //
 //    function cmp_levenstein()
 //    {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-abstract
-
-
-
-
-
-xx//    }
+//
+//    }
 //
 //    function cmp_soundex()
 //    {
 //
 //    }
-//a
+//
+//    function cmp_metaphone()
+//    {
 //
 //    }
 
