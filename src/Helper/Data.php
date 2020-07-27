@@ -445,6 +445,51 @@ class Data
     }
 
     /**
+     * Push a single item onto the data structure (optionally at given index)
+     *
+     * @param $data
+     * @param $value
+     * @param null $index
+     */
+    public static function push(&$data, $value, $index = null)
+    {
+        if (is_null($index)) {
+            if (is_array($data) || $data instanceof ArrayAccess) {
+                $data[] = $value;
+                return;
+            }
+            if (is_object($data)) {
+                if (method_exists($data, 'push')) {
+                    return $data->push($value);
+                }
+            }
+        } else {
+            if (is_array($data) || $data instanceof ArrayAccess) {
+                $data[$index] = $value;
+                return;
+            }
+            if (is_object($data)) {
+                if ($data instanceof \SplDoublyLinkedList) {
+                    $data->add($index, $value);
+                    return;
+                }
+            }
+        }
+        BadMethodCallException::raise('Unable to push item onto data structure of type "%s"', [typeof($data)]);
+    }
+
+    /**
+     * Append multiple items to the data structure
+     *
+     * @param $data
+     * @param iterable $values
+     */
+    public static function append(&$data, iterable $values)
+    {
+
+    }
+
+    /**
      * METHODS for querying data within an associative array or similar data structure
      * by string functions, arithmetic, etc.
      */

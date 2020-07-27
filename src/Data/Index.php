@@ -25,7 +25,9 @@ class Index extends SplDoublyLinkedList implements IndexInterface
      */
     public function __construct($items = null)
     {
-        $this->append(Data::toArray($items));
+        foreach (Data::toArray($items) as $item) {
+            $this->push($item);
+        }
     }
 
     /**
@@ -37,6 +39,35 @@ class Index extends SplDoublyLinkedList implements IndexInterface
     public function delete($index)
     {
         $this->offsetUnset($index);
+    }
+
+    /**
+     * Convert index to an array
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return iterator_to_array($this);
+    }
+
+    /**
+     * Rotate the list
+     * Remove an item from the beginning of the list and place it at the end. Or, if retrograde,
+     * removes an item from the end of the list and places it at the beginning.
+     *
+     * @param bool $retrograde Rotate backwards?
+     * @return IndexInterface
+     */
+    public function rotate($retrograde = false): IndexInterface
+    {
+        $index = clone $this;
+        if ($retrograde) {
+            $index->unshift($index->pop());
+            return $index;
+        }
+        $index->push($index->shift());
+        return $index;
     }
 
 }
