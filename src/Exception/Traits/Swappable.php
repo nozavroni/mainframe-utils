@@ -21,10 +21,7 @@ trait Swappable
      * @param callable $func A callable that might throw an exception to be swapped out
      * @param string|null $type A class or interface to swap out for the calling class
      * @throws Throwable
-     * @todo Accept an argument that tells which kind(s) of exception to swap, for instance if you called
-     *       a function that throws a LogicException OR a RuntimeException but you only want
-     *       RuntimeException to be swapped for a DomainException you would call
-     *       DomainException::swap($func, RuntimeException::class)
+     * @todo Allow for an array of types
      */
     public static function swap(callable $func, ?string $type = null)
     {
