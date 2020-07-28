@@ -9,9 +9,12 @@
  */
 namespace Mainframe\Utils\Exception;
 
-class LengthException extends \LengthException implements RaisableInterface, RecoverableInterface, SuppressableInterface
+class LengthException
+extends \LengthException
+implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
+        Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
 }

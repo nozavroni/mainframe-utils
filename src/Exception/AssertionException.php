@@ -11,4 +11,5 @@ namespace Mainframe\Utils\Exception;
 
 class AssertionException extends RangeException
 {
+
 }

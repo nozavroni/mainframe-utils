@@ -12,9 +12,12 @@ namespace Mainframe\Utils\Exception;
 /**
  * Exception thrown if a value does not adhere to a defined valid data domain.
  */
-class DomainException extends \DomainException implements RaisableInterface, RecoverableInterface, SuppressableInterface
+class DomainException
+extends \DomainException
+implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
+        Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
 }

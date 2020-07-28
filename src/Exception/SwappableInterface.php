@@ -9,12 +9,7 @@
  */
 namespace Mainframe\Utils\Exception;
 
-class RuntimeException
-extends \RuntimeException
-implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
+interface SwappableInterface
 {
-    use Traits\Raisable,
-        Traits\Swappable,
-        Traits\Recoverable,
-        Traits\Suppressable;
+    public static function swap(callable $func, $class);
 }
