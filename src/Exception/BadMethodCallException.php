@@ -9,9 +9,12 @@
  */
 namespace Mainframe\Utils\Exception;
 
-class BadMethodCallException extends \BadMethodCallException implements RaisableInterface, RecoverableInterface, SuppressableInterface
+class BadMethodCallException
+extends \BadMethodCallException
+implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
+        Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
 }

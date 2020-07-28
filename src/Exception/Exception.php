@@ -11,9 +11,12 @@ namespace Mainframe\Utils\Exception;
 
 use Throwable;
 
-class Exception extends \Exception implements RaisableInterface, RecoverableInterface, SuppressableInterface
+class Exception
+extends \Exception
+implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
+        Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
 }

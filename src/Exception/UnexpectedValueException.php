@@ -24,6 +24,7 @@ extends \UnexpectedValueException
 implements RaisableInterface, RecoverableInterface, SuppressableInterface
 {
     use Traits\Raisable,
+        Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
 }

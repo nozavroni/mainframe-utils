@@ -9,9 +9,12 @@
  */
 namespace Mainframe\Utils\Exception;
 
-class UnderflowException extends \UnderflowException implements RaisableInterface, RecoverableInterface, SuppressableInterface
+class UnderflowException
+extends \UnderflowException
+implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
+        Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
 }

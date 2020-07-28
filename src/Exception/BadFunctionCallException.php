@@ -9,9 +9,12 @@
  */
 namespace Mainframe\Utils\Exception;
 
-class BadFunctionCallException extends \BadFunctionCallException implements RaisableInterface, RecoverableInterface, SuppressableInterface
+class BadFunctionCallException
+extends \BadFunctionCallException
+implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
+        Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
 }

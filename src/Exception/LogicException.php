@@ -9,9 +9,12 @@
  */
 namespace Mainframe\Utils\Exception;
 
-class LogicException extends \LogicException implements RaisableInterface, RecoverableInterface, SuppressableInterface
+class LogicException
+extends \LogicException
+implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
+        Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
 }

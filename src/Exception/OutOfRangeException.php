@@ -12,9 +12,12 @@ namespace Mainframe\Utils\Exception;
 /**
  * Exception thrown when an illegal index was requested. This represents errors that should be detected at compile time.
  */
-class OutOfRangeException extends \OutOfRangeException implements RaisableInterface, RecoverableInterface, SuppressableInterface
+class OutOfRangeException
+extends \OutOfRangeException
+implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
+        Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
 }

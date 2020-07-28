@@ -9,9 +9,12 @@
  */
 namespace Mainframe\Utils\Exception;
 
-class InvalidArgumentException extends \InvalidArgumentException implements RaisableInterface, RecoverableInterface, SuppressableInterface
+class InvalidArgumentException
+extends \InvalidArgumentException
+implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
+        Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
 }

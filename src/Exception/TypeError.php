@@ -9,15 +9,12 @@
  */
 namespace Mainframe\Utils\Exception;
 
-/**
- * Exception thrown when adding an element to a full container.
- */
-class OverflowException
-extends \OverflowException
+class TypeError
+extends \TypeError
 implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
-        Traits\Swappable,
         Traits\Recoverable,
-        Traits\Suppressable;
+        Traits\Suppressable,
+        Traits\Swappable;
 }
