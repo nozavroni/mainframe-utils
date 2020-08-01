@@ -486,9 +486,33 @@ class Data
      */
     public static function append(&$data, iterable $values)
     {
-
+        foreach ($values as $val) {
+            Data::push($data, $val);
+        }
     }
 
+    public static function apply($data, $key, $func, $default = null)
+    {
+        if(!is_iterable($func)) {
+            $funcs = [$func];
+        }
+        $args = func_get_args();
+        unset($args[2]);
+        $value = Data::get(...$args);
+        foreach ($funcs as $f) {
+            $value = $f($value);
+        }
+        return $value;
+    }
+
+    public static function applyAll($data, $func, $default = null)
+    {
+        $applied = [];
+        foreach (Data::toArray($data) as $key => $val) {
+            $applied[$key] = static::apply($data, $key, $func);
+        }
+        return $applied;
+    }
     /**
      * METHODS for querying data within an associative array or similar data structure
      * by string functions, arithmetic, etc.
