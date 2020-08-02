@@ -513,6 +513,17 @@ class Data
         }
         return $applied;
     }
+
+    public static function each($items, callable $func): void
+    {
+        $i = 0;
+        foreach (Data::toArray($items) as $key => $val) {
+            if (false === value_of($func, $val, $key, $i++)) {
+                return;
+            }
+        }
+    }
+
     /**
      * METHODS for querying data within an associative array or similar data structure
      * by string functions, arithmetic, etc.
