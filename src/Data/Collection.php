@@ -21,7 +21,7 @@ class Collection implements \ArrayAccess
         Traits\Randomable,
         Traits\Sortable;
 
-    public function __construct(?iterable $items)
+    public function __construct(?iterable $items = null)
     {
         $this->storage = Data::toArray($items);
     }

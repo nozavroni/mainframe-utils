@@ -22,9 +22,14 @@ trait Swappable
      * @param string|null $type A class or interface to swap out for the calling class
      * @throws Throwable
      * @todo Allow for an array of types
+     * @todo Allow for a new message to be passed in (optionally)r
      */
-    public static function swap(callable $func, ?string $type = null)
-    {
+    public static function swap(
+        callable $func,
+        ?string $type = null,
+        ?string $message = null,
+        ?int $code = null
+    ) {
         $class = static::class;
         TypeError::raiseUnless(
             is_subclass_of($class, Throwable::class),
@@ -33,11 +38,15 @@ trait Swappable
         return recover (
             fn () => value_of($func).
             null,
-            function ($throwable) use ($class, $type) {
+            function (Throwable $throwable) use ($class, $type, $message, $code) {
                 // kind of a hack...using the handler argument (which is supposed to be passive)
                 // to throw the desired exception
                 if (is_null($type) || is_subclass_of($throwable, $type)) {
-                    throw new $class($throwable->getMessage(), $throwable->getCode(), $throwable);
+                    throw new $class(
+                        $message ?? $throwable->getMessage(),
+                        $code ?? $throwable->getCode(),
+                        $throwable
+                    );
                 }
                 // if no swap can be done, rethrow the original
                 throw $throwable;

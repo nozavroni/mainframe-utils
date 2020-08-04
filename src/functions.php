@@ -336,7 +336,7 @@ if (!function_exists('chain')) {
 if (!function_exists('callchain')) {
 
     /**
-     * @param iterable $chain
+     * @param callable[] $chain
      * @param $value
      * @param mixed ...$args
      * @return Closure
@@ -551,14 +551,18 @@ if (!function_exists('typeof')) {
                 if (!is_array($arr)) {
                     $arr = iterator_to_array($arr);
                 }
-                // if all of its elements are of the same type, include it
-                $alltypes = array_map('typeof', $arr);
-                $uniquetypes = array_unique($alltypes);
-                if (count($uniquetypes) === 1) {
-                    $type = sprintf('%s[%s]', $type, $alltypes[0]);
+                if (empty($arr)) {
+                    $type .= '(0)';
+                } else {
+                    // if all of its elements are of the same type, include it
+                    $alltypes = array_map('typeof', $arr);
+                    $uniquetypes = array_unique($alltypes);
+                    if (count($uniquetypes) === 1) {
+                        $type = sprintf('%s[%s]', $type, current($alltypes));
+                    }
+                    // if array or array object, include its count
+                    $type = sprintf('%s(%d)', $type, count($value));
                 }
-                // if array or array object, include its count
-                $type = sprintf('%s(%d)', $type, count($value));
             }
         }
         return $type;
