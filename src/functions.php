@@ -318,8 +318,10 @@ if (!function_exists('retry')) {
 if (!function_exists('chain')) {
 
     /**
-     * @param callable[] $chain
+     * @param iterable $chain
+     * @param $value
      * @param mixed ...$args
+     * @return mixed
      */
     function chain(iterable $chain, $value, ...$args)
     {
@@ -327,6 +329,26 @@ if (!function_exists('chain')) {
             $value = $link($value, ...$args);
         }
         return $value;
+    }
+
+}
+
+if (!function_exists('callchain')) {
+
+    /**
+     * @param iterable $chain
+     * @param $value
+     * @param mixed ...$args
+     * @return Closure
+     */
+    function callchain(iterable $chain, $value, ...$args)
+    {
+        return function ($value, ...$args) use ($chain) {
+            foreach ($chain as $link) {
+                $value = $link($value, ...$args);
+            }
+            return $value;
+        };
     }
 
 }

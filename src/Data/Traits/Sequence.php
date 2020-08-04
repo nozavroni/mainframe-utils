@@ -13,7 +13,7 @@ use Mainframe\Utils\Data\Index;
 use Mainframe\Utils\Exception\OutOfBoundsException;
 use Mainframe\Utils\Helper\Data;
 
-trait xaSequence
+trait Sequence
 {
     abstract public function count();
 
