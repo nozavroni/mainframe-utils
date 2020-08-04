@@ -315,6 +315,22 @@ if (!function_exists('retry')) {
 
 }
 
+if (!function_exists('chain')) {
+
+    /**
+     * @param callable[] $chain
+     * @param mixed ...$args
+     */
+    function chain(iterable $chain, $value, ...$args)
+    {
+        foreach ($chain as $link) {
+            $value = $link($value, ...$args);
+        }
+        return $value;
+    }
+
+}
+
 /**
  * //--[ Logging and Debugging ]--//
  */

@@ -11,5 +11,5 @@ namespace Mainframe\Utils\Exception;
 
 interface SwappableInterface
 {
-    public static function swap(callable $func, $class);
+    public static function swap(callable $func, string $class);
 }

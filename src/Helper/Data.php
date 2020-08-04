@@ -524,6 +524,16 @@ class Data
         }
     }
 
+    public static function invokeAll($items, callable $func, ...$extras): void
+    {
+        $i = 0;
+        foreach (Data::toArray($items) as $key => $val) {
+            if (false === value_of($func, $val, ...$extras)) {
+                return;
+            }
+        }
+    }
+
     /**
      * METHODS for querying data within an associative array or similar data structure
      * by string functions, arithmetic, etc.
