@@ -9,6 +9,8 @@
  */
 namespace Mainframe\Utils\Data;
 
+use Mainframe\Utils\Helper\Data;
+
 class Collection implements \ArrayAccess
 {
     use Traits\ArrayAccessors,
@@ -18,4 +20,9 @@ class Collection implements \ArrayAccess
         Traits\Sequence,
         Traits\Randomable,
         Traits\Sortable;
+
+    public function __construct(?iterable $items)
+    {
+        $this->storage = Data::toArray($items);
+    }
 }
