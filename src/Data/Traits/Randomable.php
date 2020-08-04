@@ -34,7 +34,7 @@ trait Randomable
         return $this;
     }
 
-    public function randomize(): RandomableInterface
+    public function randomize(): Randomable
     {
         $copy = $this->storage;
         shuffle($copy);

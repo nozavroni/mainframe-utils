@@ -13,7 +13,7 @@ use Mainframe\Utils\Helper\Data;
 
 trait Sortable
 {
-    protected $items;
+    protected $storage;
 
     /**
      * Sort the collection by value (in-place)
@@ -34,9 +34,9 @@ trait Sortable
     {
         if (is_null($alg)) {
             $flag = Data::assert('Noz\is_numeric') ? SORT_NUMERIC : SORT_NATURAL;
-            asort($this->items, $flag);
+            asort($this->storage, $flag);
         } else {
-            uasort($this->items, $alg);
+            uasort($this->storage, $alg);
         }
 
         return $this;
@@ -61,9 +61,9 @@ trait Sortable
     {
         if (is_null($alg)) {
             $flag = $this->keys()->assert('Noz\is_numeric') ? SORT_NUMERIC : SORT_NATURAL;
-            ksort($this->items, $flag);
+            ksort($this->storage, $flag);
         } else {
-            uksort($this->items, $alg);
+            uksort($this->storage, $alg);
         }
 
         return $this;
