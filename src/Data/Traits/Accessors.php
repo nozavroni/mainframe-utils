@@ -63,7 +63,7 @@ trait Accessors
      */
     public function get($key = null, $default = null)
     {
-        return Data::get($this->items, $key, $default);
+        return Data::get($this->storage, $key, $default);
     }
 
     /**
@@ -75,10 +75,10 @@ trait Accessors
     public function set($key = null, $value = null, $overwrite = true)
     {
         if (is_null($key)) {
-            array_push($this->items, $value);
+            array_push($this->storage, $value);
         }
         if ($overwrite || !$this->has($key)) {
-            Data::set($this->items, $key, $value);
+            Data::set($this->storage, $key, $value);
         }
 
         return $this;
@@ -92,7 +92,7 @@ trait Accessors
      */
     public function has($key): bool
     {
-        return Data::has($this->items, $key);
+        return Data::has($this->storage, $key);
     }
 
     /**
@@ -104,9 +104,9 @@ trait Accessors
     public function delete($key = null)
     {
         if (is_null($key)) {
-            array_pop($this->items);
+            array_pop($this->storage);
         }
-        Data::delete($this->items, $key);
+        Data::delete($this->storage, $key);
         return $this;
     }
 
@@ -117,7 +117,7 @@ trait Accessors
     public function pull($key = null)
     {
         if (is_null($key)) {
-            return array_pop($this->items);
+            return array_pop($this->storage);
         }
         $value = $this->get($key);
         $this->delete($key);
@@ -137,12 +137,12 @@ trait Accessors
 
     public function clear()
     {
-        Data::clear($this->items);
+        Data::clear($this->storage);
         return $this;
     }
 
     public function toArray(): array
     {
-        return Data::toArray($this->items);
+        return Data::toArray($this->storage);
     }
 }
