@@ -192,7 +192,7 @@ class Data
         );
 
         $arr = &$data;
-        $p = str($path);
+        $p = str((string)$path);
         if ($p->indexOf($delim)) {
             foreach ($p->split($delim) as $key) {
                 $k = (string)$key;

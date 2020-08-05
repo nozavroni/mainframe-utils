@@ -353,6 +353,29 @@ if (!function_exists('callchain')) {
 
 }
 
+if (!function_exists('combine')) {
+
+    function combine(iterable $callables): callable
+    {
+        return function ($value, ...$args) use ($callables) {
+            foreach ($callables as $link) {
+                $link($value, ...$args);
+            }
+        };
+    }
+
+}
+
+if (!function_exists('invoke_all')) {
+
+    function invoke_all(iterable $callables, $value, ...$args): void
+    {
+        $func = combine($callables);
+        $func($value, ...$args);
+    }
+
+}
+
 /**
  * //--[ Logging and Debugging ]--//
  */
