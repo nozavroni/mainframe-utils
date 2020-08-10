@@ -352,7 +352,7 @@ class Data
      */
     public static function toGenerator($items)
     {
-        $items = static::toArray($items);
+        // $items = static::toArray($items);1222
         return function () use ($items) {
             foreach ($items as $key => $val) {
                 yield $key => $val;
@@ -490,6 +490,8 @@ class Data
             Data::push($data, $val);
         }
     }
+
+    /** @todo these are a bit of a mess -- need to clean them up (invoke, invokeall etc) */
 
     public static function apply($data, $key, $func, $default = null)
     {

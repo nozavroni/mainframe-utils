@@ -9,19 +9,23 @@
  */
 namespace Mainframe\Utils\Assert\Rules;
 
+use Mainframe\Utils\Helper\Data;
 use function Mainframe\Utils\str;
 
-class StartsWithRule implements RuleInterface
+class ContainsRule extends Rule
 {
-    protected string $prefix;
+    protected $item;
 
-    public function __construct($prefix)
+    public function __construct($item)
     {
-        $this->prefix = (string) value_of($prefix);
+        $this->item = $item;
     }
 
-    public function __invoke($value): bool
+    protected function validate($value): bool
     {
-        return (bool) str($value)->startsWith($this->prefix);
+        if (is_iterable($value)) {
+            return Data::contains($value, $this->item);
+        }
+        return null !== str($value)->indexOf($this->item);
     }
 }

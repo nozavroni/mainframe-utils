@@ -9,9 +9,10 @@
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
 
-use Mainframe\Data\Collection;
 use Mainframe\Action\Exception\BreakException;
 use Mainframe\Action\Exception\FailedAttemptException;
+use Mainframe\Utils\Data\Collection;
+use Mainframe\Utils\Data\CollectionInterface;
 use function GuzzleHttp\Psr7\stream_for;
 use function Symfony\Component\String\u as str; // I think str is more useful
 
@@ -508,7 +509,7 @@ if (!function_exists('collect')) {
      * @param array|mixed $items Items to convert to a factory
      * @return Collection
      */
-    function collect($items = null): Collection
+    function collect($items = null): CollectionInterface
     {
         return Collection::factory($items);
     }

@@ -72,7 +72,7 @@ trait Accessors
      * @param mixed $value The value to set it to
      * @return $this
      */
-    public function set($key = null, $value = null, $overwrite = true)
+    public function set($key = null, $value = null, $overwrite = true): self
     {
         if (is_null($key)) {
             array_push($this->storage, $value);
@@ -101,7 +101,7 @@ trait Accessors
      * @param mixed $key The key or dot-notation path
      * @return $this
      */
-    public function delete($key = null)
+    public function delete($key = null): self
     {
         if (is_null($key)) {
             array_pop($this->storage);
@@ -135,7 +135,7 @@ trait Accessors
 //        return $this->getValueAt(rand(1, $this->count()));
 //    }
 
-    public function clear()
+    public function clear(): self
     {
         Data::clear($this->storage);
         return $this;

@@ -9,17 +9,10 @@
  */
 namespace Mainframe\Utils\Assert\Rules;
 
-class MatchRule implements RuleInterface
+class NotNullRule extends Rule
 {
-    protected string $pattern;
-
-    public function __construct($pattern)
+    protected function validate($value): bool
     {
-        $this->pattern = (string) value_of($pattern);
-    }
-
-    public function __invoke($value): bool
-    {
-        return (bool) preg_match($this->pattern, $value);
+        return null !== $value;
     }
 }

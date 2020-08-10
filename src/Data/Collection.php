@@ -9,13 +9,17 @@
  */
 namespace Mainframe\Utils\Data;
 
+use ArrayIterator;
+use Exception;
 use Mainframe\Utils\Helper\Data;
+use Traversable;
 
-class Collection implements \ArrayAccess
+class Collection implements CollectionInterface
 {
     use Traits\ArrayAccessors,
         Traits\Accessors,
         Traits\Countable,
+        Traits\HigherOrder,
         Traits\Stackable,
         Traits\Sequence,
         Traits\Randomable,
@@ -23,6 +27,28 @@ class Collection implements \ArrayAccess
 
     public function __construct(?iterable $items = null)
     {
-        $this->storage = Data::toArray($items);
+        $this->storage = [];
+        if (!empty($items)) {
+            foreach ($items as $key => $val) {
+                $this->set($key, $val);
+            }
+        }
+    }
+
+    /**
+     * Retrieve an external iterator
+     * @link https://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @return Traversable An instance of an object implementing <b>Iterator</b> or
+     * <b>Traversable</b>
+     * @throws Exception on failure.
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->storage);
+    }
+
+    public static function create($items): CollectionInterface
+    {
+        return new static(Data::toArray($items));
     }
 }

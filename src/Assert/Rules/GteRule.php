@@ -9,17 +9,17 @@
  */
 namespace Mainframe\Utils\Assert\Rules;
 
-class GteRule implements RuleInterface
+class GteRule extends Rule
 {
-    protected $upper;
+    protected $number;
 
-    public function __construct($upper)
+    public function __construct($number)
     {
-        $this->upper = value_of($upper);
+        $this->number = $number;
     }
 
-    public function __invoke($value): bool
+    protected function validate($value): bool
     {
-        return (bool) $value >= $this->upper;
+        return $value >= value_of($this->number);
     }
 }

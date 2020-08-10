@@ -9,20 +9,17 @@
  */
 namespace Mainframe\Utils\Assert\Rules;
 
-class InclusiveBetweenRule implements RuleInterface
+class GtRule extends Rule
 {
-    protected $min;
+    protected $pattern;
 
-    protected $max;
-
-    public function __construct($min, $max)
+    public function __construct($pattern)
     {
-        $this->min = value_of($min);
-        $this->max = value_of($max);
+        $this->pattern = $pattern;
     }
 
-    public function __invoke($value): bool
+    protected function validate($value): bool
     {
-        return ($value >= $this->min && $value <= $this->max);
+        return preg_match($this->pattern, $value);
     }
 }

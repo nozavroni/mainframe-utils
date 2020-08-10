@@ -7,21 +7,14 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
-namespace Mainframe\Utils\Assert\Rules;
+namespace Mainframe\Utils\Assert\Operations;
 
-class OrRule implements RuleInterface
+class OrOperation extends Operation
 {
-    protected array $callables;
-
-    public function __construct(...$callbacks)
+    protected function doOperation($value): bool
     {
-        $this->callables = $callbacks;
-    }
-
-    public function __invoke($value): bool
-    {
-        foreach ($this->callables as $func) {
-            if (value_of($func, $value)) {
+        foreach ($this->operands as $operand) {
+            if (value_of($operand, $value)) {
                 return true;
             }
         }

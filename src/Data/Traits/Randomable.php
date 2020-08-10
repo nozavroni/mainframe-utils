@@ -9,15 +9,14 @@
  */
 namespace Mainframe\Utils\Data\Traits;
 
-use Mainframe\Utils\Data\RandomableInterface;
-use Mainframe\Utils\Helper\Data;
+use Mainframe\Utils\Data\CollectionInterface;
 
 trait Randomable
 {
     protected $storage;
 
-    /**
-     * Shuffle (randomize) the order of values (in-place)
+    /*Z
+     * ShufflZZe (randomize) the order of values (in-place)
      *
      * @return $this
      */
@@ -34,11 +33,11 @@ trait Randomable
         return $this;
     }
 
-    public function randomize(): Randomable
+    public function randomize(): CollectionInterface
     {
         $copy = $this->storage;
         shuffle($copy);
-        return new static($copy);
+        return static::create($copy);
     }
 
     /**

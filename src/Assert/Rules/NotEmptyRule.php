@@ -9,17 +9,10 @@
  */
 namespace Mainframe\Utils\Assert\Rules;
 
-class GtRule extends Rule
+class NotEmptyRule extends Rule
 {
-    protected $number;
-
-    public function __construct($number)
-    {
-        $this->number = $number;
-    }
-
     protected function validate($value): bool
     {
-        return $value > value_of($this->number);
+        return !empty($value);
     }
 }

@@ -9,20 +9,23 @@
  */
 namespace Mainframe\Utils\Assert\Rules;
 
-class BetweenRule implements RuleInterface
+use Mainframe\Utils\Assert\Assert;
+
+class BetweenRule extends Rule
 {
-    protected $min;
+    protected $low;
 
-    protected $max;
+    protected $high;
 
-    public function __construct($min, $max)
+    public function __construct(Assert $assert, $low, $high)
     {
-        $this->min = value_of($min);
-        $this->max = value_of($max);
+        $this->assert = $assert;
+        $this->low = $low;
+        $this->high = $high;
     }
 
-    public function __invoke($value): bool
+    protected function validate($value): bool
     {
-        return ($value > $this->min && $value < $this->max);
+        return $value < value_of($this->high) && $value > value_of($this->low);
     }
 }

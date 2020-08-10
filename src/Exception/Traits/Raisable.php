@@ -64,11 +64,11 @@ trait Raisable
 //        parent::__construct((string) $message, $code, $throwable);
 //    }
 
-    public static function create(?string $str = null, array $args = [], ?Throwable $throwable = null): RaisableInterface
+    public static function create(?string $str = null, array $args = [], ?Throwable $throwable = null): self
     {
         $dt = new DateTime;
         $predefined = [
-            'type' => parent::class,
+            'type' => self::class,
             'date' => $dt->format(DATE),
             'time' => $dt->format(TIME),
             'datetime' => $dt->format(DATE . ' ' . TIME),
@@ -77,7 +77,7 @@ trait Raisable
         ];
 
         return new static (
-            vsprintf(
+            vsprintf (
                 Str::template($str, $args + $predefined, '{%%%s}'),
                 array_filter($args, fn ($key) => is_int($key), ARRAY_FILTER_USE_KEY)
             ),

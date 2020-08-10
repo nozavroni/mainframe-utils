@@ -9,19 +9,20 @@
  */
 namespace Mainframe\Utils\Assert\Rules;
 
-use function Mainframe\Utils\str;
-
-class EndsWithRule implements RuleInterface
+class IBetweenRule extends Rule
 {
-    protected string $suffix;
+    protected $low;
 
-    public function __construct($suffix)
+    protected $high;
+
+    public function __construct($low, $high)
     {
-        $this->suffix = (string) value_of($suffix);
+        $this->low = $low;
+        $this->high = $high;
     }
 
-    public function __invoke($value): bool
+    protected function validate($value): bool
     {
-        return (bool) str($value)->endsWith($this->suffix);
+        return $value <= value_of($this->high) && $value >= value_of($this->low);
     }
 }

@@ -9,17 +9,17 @@
  */
 namespace Mainframe\Utils\Assert\Rules;
 
-class LtRule implements RuleInterface
+class LtRule extends Rule
 {
-    protected $lower;
+    protected $number;
 
-    public function __construct($lower)
+    public function __construct($number)
     {
-        $this->lower = value_of($lower);
+        $this->number = $number;
     }
 
-    public function __invoke($value): bool
+    protected function validate($value): bool
     {
-        return (bool) $value < $this->lower;
+        return $value < value_of($this->number);
     }
 }

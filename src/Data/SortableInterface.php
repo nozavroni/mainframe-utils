@@ -7,14 +7,10 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
-namespace Mainframe\Utils\Data\Traits;
+namespace Mainframe\Utils\Data;
 
-use Mainframe\Utils\Helper\Data;
-
-trait Sortable
+interface SortableInterface
 {
-    protected $storage;
-
     /**
      * Sort the collection by value (in-place)
      *
@@ -30,17 +26,7 @@ trait Sortable
      *
      * @return self
      */
-    public function sort(callable $alg = null): self
-    {
-        if (is_null($alg)) {
-            $flag = Data::assert('Noz\is_numeric') ? SORT_NUMERIC : SORT_NATURAL;
-            asort($this->storage, $flag);
-        } else {
-            uasort($this->storage, $alg);
-        }
-
-        return $this;
-    }
+    public function sort(callable $alg = null): self;
 
     /**
      * Sort the collection by key (in-place)
@@ -57,15 +43,5 @@ trait Sortable
      *
      * @return self
      */
-    public function ksort(callable $alg = null): self
-    {
-        if (is_null($alg)) {
-            $flag = $this->keys()->assert('Noz\is_numeric') ? SORT_NUMERIC : SORT_NATURAL;
-            ksort($this->storage, $flag);
-        } else {
-            uksort($this->storage, $alg);
-        }
-
-        return $this;
-    }
+    public function ksort(callable $alg = null): self;
 }

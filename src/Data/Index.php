@@ -9,15 +9,19 @@
  */
 namespace Mainframe\Utils\Data;
 
+use Mainframe\Utils\Data\Traits\HigherOrder;
 use Mainframe\Utils\Helper\Data;
+use Countable;
 use SplDoublyLinkedList;
 
 /**
  * @does it make sense to extend SplDoublyLinkedList rather than using it internally?
  */
-class Index extends SplDoublyLinkedList implements IndexInterface
+class Index extends SplDoublyLinkedList implements IndexInterface, HigherOrderInterface, Countable
 {
-    use Traits\Sequence;
+    use Traits\Sequence,
+        Traits\HigherOrder,
+        Traits\Countable;
 
     /**
      * Index constructor
@@ -28,6 +32,21 @@ class Index extends SplDoublyLinkedList implements IndexInterface
         foreach (Data::toArray($items) as $item) {
             $this->push($item);
         }
+    }
+
+    public function getIterator()
+    {
+        return Data::toGenerator($this);
+    }
+
+    public static function create($items): HigherOrder
+    {
+        // TODO: Implement create() method.
+    }
+
+    public function count()
+    {
+        // TODO: Implement count() method.
     }
 
     /**

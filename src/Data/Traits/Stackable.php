@@ -15,7 +15,7 @@ use Mainframe\Utils\Helper\Data;
 
 trait Stackable
 {
-    /** @var iterable The underlying items */
+    /** @var array The underlying items */
     protected $storage;
 
     /**

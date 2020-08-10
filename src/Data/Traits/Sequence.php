@@ -10,7 +10,6 @@
 namespace Mainframe\Utils\Data\Traits;
 
 use Mainframe\Utils\Data\Index;
-use Mainframe\Utils\Exception\OutOfBoundsException;
 use Mainframe\Utils\Helper\Data;
 
 trait Sequence
@@ -62,41 +61,72 @@ trait Sequence
      * @param mixed $value The value to get the indexes of
      * @return Index
      */
-    public function indexes($value): Index
+    public function indexesOf($value, $strict = false): Index
     {
-        // TODO: Implement indexes() method.
+        $cmp = $strict ?
+            fn ($a, $b) => $a === $b :
+            fn ($a, $b) => $a == $b;
+
+        $indexes = new Index;
+        foreach (Data::toIndex($this) as $i => $val) {
+            if ($cmp($val, $value)) {
+                $indexes->push($i);
+            }
+        }
+        return $indexes;
     }
 
     /**
-     * Get the first item in the index
-     * If a predicate callback is provided, then return the first item that passes the predicate.
-     * If nothing passes the predicate or the index is empty, return the default. If no default
-     * is provided, throw an OutOfBoundsException.
+     * Get an index of all keys that match $value
      *
-     * @param callable|null $predicate Optional assertion callback
-     * @param mixed|null $default The default to return of predicate fails for all items
-     * @return mixed
-     * @throws OutOfBoundsException
+     * @param mixed $value The value to get the indexes of
+     * @return Index
      */
-    public function first(?callable $predicate = null, $default = null)
+    public function keysOf($value, $strict = false): Index
     {
-        return Data::first($this, $predicate, $default);
+        $cmp = $strict ?
+            fn ($a, $b) => $a === $b :
+            fn ($a, $b) => $a == $b;
+
+        $keys = new Index();
+        foreach (Data::toArray($this) as $key => $val) {
+            if ($cmp($val, $value)) {
+                $keys->push($key);
+            }
+        }
+        return $keys;
     }
 
-    /**
-     * Get the last item in the index
-     * If a predicate callback is provided, then return the last item that passes the predicate.
-     * If nothing passes the predicate or the index is empty, return the default. If no default
-     * is provided, throw an OutOfBoundsException.
-     *
-     * @param callable|null $predicate Optional assertion callback
-     * @param mixed|null $default The default to return of predicate fails for all items
-     * @return mixed
-     * @throws OutOfBoundsException
-     */
-    public function last(?callable $predicate = null, $default = null)
-    {
-        return Data::last($this, $predicate, $default);
-    }
+//    /**
+//     * Get the first item in the index
+//     * If a predicate callback is provided, then return the first item that passes the predicate.
+//     * If nothing passes the predicate or the index is empty, return the default. If no default
+//     * is provided, throw an OutOfBoundsException.
+//     *
+//     * @param callable|null $predicate Optional assertion callback
+//     * @param mixed|null $default The default to return of predicate fails for all items
+//     * @return mixed
+//     * @throws OutOfBoundsException
+//     */
+//    public function first(?callable $predicate = null, $default = null)
+//    {
+//        return Data::first($this, $predicate, $default);
+//    }
+//
+//    /**
+//     * Get the last item in the index
+//     * If a predicate callback is provided, then return the last item that passes the predicate.
+//     * If nothing passes the predicate or the index is empty, return the default. If no default
+//     * is provided, throw an OutOfBoundsException.
+//     *
+//     * @param callable|null $predicate Optional assertion callback
+//     * @param mixed|null $default The default to return of predicate fails for all items
+//     * @return mixed
+//     * @throws OutOfBoundsException
+//     */
+//    public function last(?callable $predicate = null, $default = null)
+//    {
+//        return Data::last($this, $predicate, $default);
+//    }
 
 }
