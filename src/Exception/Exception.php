@@ -9,7 +9,9 @@
  */
 namespace Mainframe\Utils\Exception;
 
-use Throwable;
+/**
+ * The most generic possible exception type
+ */
 
 class Exception
 extends \Exception

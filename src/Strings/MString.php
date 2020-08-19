@@ -24,5 +24,22 @@ class MString extends UnicodeString
         return static::create(Str::sluggify((string)$this, $maxlen));
     }
 
-    
+    public function isMinLength(int $length, $inclusive = true): bool
+    {
+        return $inclusive ?
+            $this->length() >= $length :
+            $this->length() > $length;
+    }
+
+    public function isMaxLength(int $length, $inclusive = true): bool
+    {
+        return $inclusive ?
+            $this->length() <= $length :
+            $this->length() < $length;
+    }
+
+    public function isLength(int $length): bool
+    {
+        return $this->length() == $length;
+    }
 }

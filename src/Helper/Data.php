@@ -11,7 +11,6 @@ namespace Mainframe\Utils\Helper;
 
 use ArrayAccess;
 use ArrayObject;
-use Mainframe\Utils\Data\SortableInterface;
 use Mainframe\Utils\Exception\BadMethodCallException;
 use Mainframe\Utils\Exception\InvalidArgumentException;
 use Mainframe\Utils\Exception\OutOfBoundsException;

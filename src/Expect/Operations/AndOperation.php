@@ -15,9 +15,6 @@ class AndOperation extends Operation
 {
     protected function doOperation($value): bool
     {
-//        return $this->operands->assert(function ($operand) use ($value) {
-//            return (bool) value_of($operand, $value);
-//        });
         foreach ($this->operands as $operand) {
             if (!value_of($operand, $value)) {
                 return false;

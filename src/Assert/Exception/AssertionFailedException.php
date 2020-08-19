@@ -7,13 +7,11 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
-namespace Mainframe\Utils\Assert;
+namespace Mainframe\Utils\Assert\Exception;
 
-use SplStack;
+use Mainframe\Utils\Exception\AssertionException;
 
-class AssertStack extends SplStack
+class AssertionFailedException extends AssertionException
 {
-    public function __construct()
-    {
-    }
+
 }

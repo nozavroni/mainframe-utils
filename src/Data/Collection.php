@@ -47,7 +47,7 @@ class Collection implements CollectionInterface
         return new ArrayIterator($this->storage);
     }
 
-    public static function create($items): CollectionInterface
+    public static function create($items = null): CollectionInterface
     {
         return new static(Data::toArray($items));
     }

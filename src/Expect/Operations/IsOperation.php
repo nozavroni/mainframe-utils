@@ -10,12 +10,13 @@
 namespace Mainframe\Utils\Assert\Operations;
 
 use Mainframe\Utils\Assert\Assert;
-use Mainframe\Utils\Assert\Value;
+use Mainframe\Utils\Data\Pair;
 
+/**
+ * @property bool|callable $test
+ */
 class IsOperation extends Operation
 {
-    protected $test;
-
     /**
      * IsOperation constructor.
      * @param Assert $assertion
@@ -23,10 +24,16 @@ class IsOperation extends Operation
      */
     public function __construct(Assert $assertion, $test)
     {
-        $this->test = $test;
-        $this->assertion = $assertion;
+        parent::__construct (
+            $assertion,
+            new Pair('test', $test)
+        );
     }
 
+    /**
+     * @param mixed $value The value the operation is applied to
+     * @return bool
+     */
     protected function doOperation($value): bool
     {
         return (bool) value_of($this->test, $value);

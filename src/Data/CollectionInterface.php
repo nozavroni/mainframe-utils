@@ -24,5 +24,5 @@ extends
     IteratorAggregate,
     Countable
 {
-    public static function create($items): CollectionInterface;
+    public static function create($items): self;
 }

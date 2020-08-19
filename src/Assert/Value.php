@@ -9,93 +9,92 @@
  */
 namespace Mainframe\Utils\Assert;
 
-/**
- * Value object
- * This class/object is used as a stand-in for a value until such a time as the actual value is available.
- * You instantiate it
- */
+use Closure;
+use Mainframe\Utils\Assert\Exception\AssertionFailedException;
+use Mainframe\Utils\Assert\Exception\UnknownRuleException;
+use Mainframe\Utils\Assert\Operator\OperatorInterface;
+use Mainframe\Utils\Assert\Rule\RuleInterface;
+use Mainframe\Utils\Helper\Str;
+
 class Value
 {
-    /** @var mixed|callable The value (or callback) to run assertions on */
+    const REPL_FORMAT = '{%%%s}';
+    const RULE_CLASS = '{%namespace}\\Rule\\{%name}Rule';
+
+    /** @var callable The value as a callback so that it can be filled in later */
     protected $value;
 
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
+    /** @var RuleSetInterface|null The rules associated with this value */
+    protected ?RuleSetInterface $rules;
 
+    /**
+     * PHP 5 allows developers to declare constructor methods for classes.
+     * Classes which have a constructor method call this method on each newly-created object,
+     * so it is suitable for any initialization that the object may need before it is used.
+     *
+     * Note: Parent constructors are not called implicitly if the child class defines a constructor.
+     * In order to run a parent constructor, a call to parent::__construct() within the child constructor is required.
+     *
+     * param [ mixed $args [, $... ]]
+     * @link https://php.net/manual/en/language.oop5.decon.php
+     */
+    public function __construct($value = null)
+    {
+        $this->setValue($value);
+    }
+
+    public function setValue($value): self
+    {
+        $this->value = $value;
+        return $this;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
     }
 
     /**
-     * Invoke the object as if it were a function
+     * is triggered when invoking inaccessible methods in an object context.
+     *
+     * @param $name string
+     * @param $arguments array
      * @return mixed
+     * @link https://php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.methods
+     */
+    public function __call($name, $arguments): bool
+    {
+        $class = Str::template(
+            static::RULE_CLASS,
+            ['name' => ucfirst($name), 'namespace' => __NAMESPACE__],
+            static::REPL_FORMAT
+        );
+
+        if (class_exists($class)) {
+            /** @var RuleInterface $rule */
+            $rule = new $class(...$arguments);
+            return $rule->validate($this);
+        }
+
+        UnknownRuleException::raise('Unknown method: %s::%s', [__CLASS__, $name]);
+    }
+
+    /**
+     * Invoking the value as if it were a function will produce its value
      */
     public function __invoke()
     {
-        return $this->getValue();
-    }
-
-    public function setValue($value)
-    {
-        $this->value = $value;
+        return value_of($this->getValue());
     }
 
     /**
-     * Get the value
+     * The __toString method allows a class to decide how it will react when it is converted to a string.
      *
-     * @return mixed
+     * @return string
+     * @link https://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.tostring
      */
-    public function getValue()
+    public function __toString()
     {
-        return value_of($this->value);
+        return (string) value_of($this->getValue());
     }
-//
-//    public function or(...$choices)
-//    {
-//        foreach ($choices as $choice) {
-//            if (value_of($choice, $this)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    public function xor($first, $second)
-//    {
-//        return value_of($first, $this) xor value_of($second, $this);
-//    }
-//
-//    public function and(...$choices)
-//    {
-//        foreach ($choices as $choice) {
-//            if (!value_of($choice, $this)) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-//
-//    public function if($condition, $then, $else = null)
-//    {
-//        if (value_of($condition, $this)) {
-//            return value_of($then, $this);
-//        } else {
-//            return value_of($else, $this);
-//        }
-//    }
-//
-//    public function unless($condition, $action)
-//    {
-//        if (!value_of($condition, $this)) {
-//            return value_of($action, $this);
-//        }
-//        return false;
-//    }
-//
-//    public function assert($condition)
-//    {
-//        return value_of($condition, $this);
-//    }
-
 }

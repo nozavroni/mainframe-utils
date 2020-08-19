@@ -76,7 +76,7 @@ class Str
      */
     public static function make($value): MString
     {
-        return new MString(u($value));
+        return new MString(u((string)$value));
     }
 
 //    public static function compare()

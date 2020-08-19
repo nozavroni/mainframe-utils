@@ -5,9 +5,9 @@
          backupStaticAttributes="false"
          forceCoversAnnotation="false"
          colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
+         convertErrorsToExceptions="false"
+         convertNoticesToExceptions="false"
+         convertWarningsToExceptions="false"
          processIsolation="false"
          stopOnFailure="false"
          stopOnError="false"
@@ -18,7 +18,7 @@
          timeoutForMediumTests="10"
          timeoutForLargeTests="60"
          verbose="true"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
          >
     <testsuites>
       <testsuite name="Mainframe Utils Tests">

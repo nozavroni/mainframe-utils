@@ -9,6 +9,10 @@
  */
 namespace Mainframe\Utils\Exception;
 
+/**
+ * Exception thrown if a length is invalid.
+ */
+
 class LengthException
 extends \LengthException
 implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface

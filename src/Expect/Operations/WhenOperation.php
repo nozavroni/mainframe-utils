@@ -10,21 +10,23 @@
 namespace Mainframe\Utils\Assert\Operations;
 
 use Mainframe\Utils\Assert\Assert;
+use Mainframe\Utils\Data\Pair;
 
+/**
+ * @property bool|callable $condition
+ * @property bool|callable $then
+ * @property bool|callable $else
+ */
 class WhenOperation extends Operation
 {
-    protected $condition;
-
-    protected $then;
-
-    protected $else;
-
     public function __construct(Assert $assertion, $condition, $then, $else = false)
     {
-        $this->assertion = $assertion;
-        $this->condition = $condition;
-        $this->then = $then;
-        $this->else = $else;
+        parent::__construct (
+            $assertion,
+            new Pair('condition', $condition),
+            new Pair('then', $then),
+            new Pair('else', $else)
+        );
     }
 
     protected function doOperation($value): bool

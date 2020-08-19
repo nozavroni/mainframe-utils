@@ -13,7 +13,7 @@ class OrOperation extends Operation
 {
     protected function doOperation($value): bool
     {
-        foreach ($this->operands as $operand) {
+        foreach ($this->operands as $key => $operand) {
             if (value_of($operand, $value)) {
                 return true;
             }

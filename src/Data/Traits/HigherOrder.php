@@ -18,12 +18,12 @@ trait HigherOrder
     abstract public static function create($items): CollectionInterface;
 
     /**
-     * Assert callback returns $expected value for each item in collection.
+     * Expect callback returns $expected value for each item in collection.
      *
      * This method will loop over each item in the collection, passing them to the callback. If the callback doesn't
      * return $expected value for every item in the collection, it will return false.
      *
-     * @param callable|null $func Assert callback
+     * @param callable|null $func Expect callback
      * @param mixed $expected Expected value from callback
      *
      * @return bool
@@ -42,10 +42,10 @@ trait HigherOrder
     }
 
     /**
-     * Assert than any value in the collection is equal to another value
+     * Expect than any value in the collection is equal to another value
      * This method does exactly what "assert" does except that it will return true if ANY item asserts true.
      *
-     * @param callable|null $func Assert callback
+     * @param callable|null $func Expect callback
      * @param bool $expected Expected value from callback
      *
      * @return bool

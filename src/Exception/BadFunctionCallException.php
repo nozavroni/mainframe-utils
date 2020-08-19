@@ -9,6 +9,11 @@
  */
 namespace Mainframe\Utils\Exception;
 
+/**
+ * Exception thrown if a callback refers to an undefined function or if some
+ * arguments are missing.
+ */
+
 class BadFunctionCallException
 extends \BadFunctionCallException
 implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface

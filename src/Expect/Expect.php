@@ -13,20 +13,28 @@ use Closure;
 use Mainframe\Utils\Assert\Exception\ValidationException;
 use Mainframe\Utils\Assert\Rules\RuleInterface;
 use Mainframe\Utils\Data\Collection;
+use Mainframe\Utils\Data\Index;
+use Mainframe\Utils\Data\IndexInterface;
 use Mainframe\Utils\Exception\AssertionException;
 use Mainframe\Utils\Helper\Str;
+use SplStack;
 
 /**
- * @method Expression and(...$conditions)
- * @method Expression or(...$conditions)
- * @method Expression xor($left, $right)
- * @method Expression when(callable $condition, callable $then, callable $else)
- * @method Expression unless(callable $condition, callable $then)
- * @method Expression not(callable $condition)
+ * @todo Look into the possibility of generating these via a composer script or something so that
+ *       I don't have to maintain them manually but rather have them generated from the various
+ *       operation and rule classes.
  *
- * @method
+ * @method self and(...$conditions)
+ * @method self or(...$conditions)
+ * @method self xor($left, $right)
+ * @method self when(callable $condition, callable $then, callable $else)
+ * @method self unless(callable $condition, callable $then)
+ * @method self not(callable $condition)
+ * @method self is(callable $condition)
+ *
+ * @method bool static between($min, $max)
  */
-class Assert
+class Assert extends SplStack
 {
     const REPL_FORMAT = '{%%%s}';
 
@@ -34,19 +42,15 @@ class Assert
 
     const RULES_CLASS = '\\Mainframe\\Utils\\Assert\\Rules\\{%name}Rule';
 
-    /** @var AssertStack A collection of rules by operator */
-    protected AssertStack $callstack;
-
-    /** @var Collection Exceptions thrown by assertion(s) */
-    protected Collection $errors;
+    /** @var IndexInterface Exceptions thrown by this assertion stack */
+    protected IndexInterface $errors;
 
     /**
      * Assert constructor
      */
     public function __construct()
     {
-        $this->callstack = new AssertStack();
-        $this->errors = new Collection();
+        $this->errors = new Index();
     }
 
     /**
@@ -121,7 +125,7 @@ class Assert
                     value_of($assertion, $value);
                     return true;
                 },
-                false,
+                true, // @note this is really important - it allows for exceptions to be thrown OR for assertion to return false to do the same thing without duplicating the exception in the errors array
                 fn ($error) => $this->registerError($error)
             )) {
                 $this->registerError(ValidationException::create('Failed and stuff'));
@@ -138,7 +142,7 @@ class Assert
     public function isValid($value): bool
     {
         value_of($this, $value);
-        dump($this->errors->isEmpty());
+        dd($this->errors);
         return $this->errors->isEmpty();
     }
 }

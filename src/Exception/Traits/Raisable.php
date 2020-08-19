@@ -19,6 +19,8 @@ const TIME = 'g:i:sa';
 
 trait Raisable
 {
+    protected static $defaultMsg = 'A problem occurred';
+
     /**
      * Essentially this is just a different way to throw an exception where no message is required, in fact
      * no arguments at all are. And the exception message works as sprintf() does. This just makes it cleaner
@@ -57,15 +59,9 @@ trait Raisable
         }
     }
 
-    // @todo I had wanted to do this so that isRaised would always be right, but I suppose it still will be
-    //      as raised is somewhat different than thrown
-//    private function __construct($message = null, $code = 0, Throwable $throwable = null)
-//    {
-//        parent::__construct((string) $message, $code, $throwable);
-//    }
-
     public static function create(?string $str = null, array $args = [], ?Throwable $throwable = null): self
     {
+        $str ??= static::$defaultMsg;
         $dt = new DateTime;
         $predefined = [
             'type' => self::class,

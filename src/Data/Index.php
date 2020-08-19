@@ -9,7 +9,6 @@
  */
 namespace Mainframe\Utils\Data;
 
-use Mainframe\Utils\Data\Traits\HigherOrder;
 use Mainframe\Utils\Helper\Data;
 use Countable;
 use SplDoublyLinkedList;
@@ -20,8 +19,7 @@ use SplDoublyLinkedList;
 class Index extends SplDoublyLinkedList implements IndexInterface, HigherOrderInterface, Countable
 {
     use Traits\Sequence,
-        Traits\HigherOrder,
-        Traits\Countable;
+        Traits\HigherOrder;
 
     /**
      * Index constructor
@@ -39,14 +37,9 @@ class Index extends SplDoublyLinkedList implements IndexInterface, HigherOrderIn
         return Data::toGenerator($this);
     }
 
-    public static function create($items): HigherOrder
+    public static function create($items): self
     {
-        // TODO: Implement create() method.
-    }
-
-    public function count()
-    {
-        // TODO: Implement count() method.
+        return new Index($items);
     }
 
     /**

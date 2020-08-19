@@ -9,6 +9,10 @@
  */
 namespace Mainframe\Utils\Exception;
 
+/**
+ * Exception thrown when you try to remove an element of an empty container.
+ */
+
 class UnderflowException
 extends \UnderflowException
 implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface

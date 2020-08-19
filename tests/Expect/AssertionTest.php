@@ -3,7 +3,7 @@
  * Mainframe - Utilities
  *
  * A set of functions and classes used by all of the various Mainframe components and repositories.
- *
+ * m,,,,,,,,,,,,,,,,,,
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
@@ -12,7 +12,7 @@ namespace MainframeTest\Utils\Assert;
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
-use Mainframe\Utils\Assert\Assert;
+use Mainframe\Utils\Expect\Expect;
 use MainframeTest\Utils\MainframeTestCase;
 
 class AssertionTest extends MainframeTestCase
@@ -20,24 +20,28 @@ class AssertionTest extends MainframeTestCase
 
     public function testAssertRuleChain()
     {
-        $assert = new Assert();
-        $assert->is(fn($a) => dd($a));
+        // $assert->is(true);
+        $assert = new Expect();
+        $assert->xor (
+            // true, false
+            fn (Expect $a) => $a->is(true),
+            fn (Expect $a) => $a->is(false)
+        );
         //$assert->xor(true, true);
-        dump($assert);
         $this->assertTrue($assert->isValid('test'));
     }
 
 //    public function testValueAssertion()
 //    {
-//        $assert = new Assert();
-//        $assert->and(
-//            function (Assert $a) {
+//        $assert = new Expect();
+//        $assert->and(1
+//            function (Expect $a) {
 //                return $a->or(
 //                    fn($a) => $a::NotEmpty(),
 //                    false
-//                );
-//            },
-//            fn (Assert $a) => $a::Regex('\w+')
+//                );s
+//            },2
+//            fn (Expect $a) => $a::Regex('\w+')
 //        );
 //        $this->assertTrue($assert->isValid('I am the value'));
 //    }
@@ -52,9 +56,9 @@ class AssertionTest extends MainframeTestCase
 //            fn ($asst) => $asst->endsWith('food'),
 //            fn ($asst) => $asst->beginsWith('chinese')
 //        );
-//        $assertions->matches('/123 [\w ]+/i');
 //        $this->assertTrue($assertions('123 some chinese food'));
 //    }
+//        $assertions->matches('/123 [\w ]+/i');
 //
 //    public function testAssertRecordsErrors()
 //    {

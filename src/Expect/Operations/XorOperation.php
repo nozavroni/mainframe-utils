@@ -10,19 +10,21 @@
 namespace Mainframe\Utils\Assert\Operations;
 
 use Mainframe\Utils\Assert\Assert;
-use Mainframe\Utils\Assert\Value;
+use Mainframe\Utils\Data\Pair;
 
+/**
+ * @property bool|callable $left
+ * @property bool|callable $right
+ */
 class XorOperation extends Operation
 {
-    protected $left;
-
-    protected $right;
-
     public function __construct(Assert $assertion, $left, $right)
     {
-        $this->assertion = $assertion;
-        $this->left = $left;
-        $this->right = $right;
+        parent::__construct(
+            $assertion,
+            new Pair('left', $left),
+            new Pair('right', $right)
+        );
     }
 
     protected function doOperation($value): bool
