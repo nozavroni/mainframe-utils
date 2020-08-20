@@ -63,20 +63,7 @@ class RuleSet implements RuleSetInterface
             $value = new Value($value);
         }
         foreach ($this->rules as $rule) {
-            if (!value_of($rule, $value)) {
-                // @todo add a method on AssertionFailedException called setAssertion() that allows you
-                //       to specify the assertion that failed. Then move this reflection code into the
-                //       exception rather than here
-                $func = new \ReflectionFunction($rule);
-                $opname = str(get_class($func->getClosureThis()))
-                    ->afterLast('\\')
-                    ->replace('Operator', ' Operator');
-                AssertionFailedException::raise(
-                    "%s failed for \"%s\"",
-                    [$opname, $value]
-                );
-            }
-
+            AssertionFailedException::assert($rule, $value);
         }
     }
 
@@ -91,7 +78,11 @@ class RuleSet implements RuleSetInterface
                 $this->__invoke($value);
                 return true;
             },
-            false
+            false,
+            function ($exception) {
+                // this is where you could do logging or something...
+                // dump($exception);
+            }
         );
     }
 }

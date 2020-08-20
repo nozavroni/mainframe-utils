@@ -51,11 +51,18 @@ class AssertTest extends MainframeTestCase
                 return A::and(fn(Value $v) => $v->maxLength(15), fn($v) => A::xor(true, false));
             },
             fn(Value $v) => A::and(fn(Value $v) => $v->minLength(1), true),
-            fn(Value $v) => $v->maxLength(10)
+            fn(Value $v) => $v->maxLength(10),
+            fn(Value $v) => A::xor($v->isFloat(), $v->isString())
         );
         $good = new Value('as');
         $bad = new Value('asdfasdfasdfasdf');
+        $bad2 = new Value(100);
+        $this->assertTrue($assert->isValid($good));
+        $this->assertTrue($assert->isValid($good));
+        $this->assertTrue($assert->isValid($good));
         $this->assertTrue($assert->isValid($good));
         $this->assertFalse($assert->isValid($bad));
+        $this->assertFalse($assert->isValid($bad2));
+
     }
 }

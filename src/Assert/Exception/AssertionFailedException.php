@@ -10,8 +10,28 @@
 namespace Mainframe\Utils\Assert\Exception;
 
 use Mainframe\Utils\Exception\AssertionException;
+use ReflectionFunction;
+use function Mainframe\Utils\str;
 
 class AssertionFailedException extends AssertionException
 {
-
+    public static function assert(callable $assertion, $value)
+    {
+        if (!value_of($assertion, $value)) {
+            $info = new ReflectionFunction($assertion);
+            $opname = str(get_class($info->getClosureThis()))
+                ->afterLast('\\')
+                ->replace('Operator', ' Operator');
+            static::raise(
+                '%s assertion failed for: %s %s',
+                [
+                    // $info->getClosureScopeClass(),
+                    $opname,
+                    $info->getName(),
+                    $info->getParameters()[0]->getName(),
+                    $value
+                ]
+            );
+        }
+    }
 }

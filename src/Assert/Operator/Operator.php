@@ -10,8 +10,6 @@
 namespace Mainframe\Utils\Assert\Operator;
 
 use Closure;
-use Mainframe\Utils\Assert\RuleSet;
-use Mainframe\Utils\Assert\RuleSetInterface;
 use Mainframe\Utils\Assert\Value;
 use Mainframe\Utils\Exception\BadMethodCallException;
 use Mainframe\Utils\Helper\Data;

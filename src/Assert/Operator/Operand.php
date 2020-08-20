@@ -17,8 +17,6 @@ class Operand
 {
     protected Closure $callback;
 
-    protected SplObjectStorage $values;
-
     /**
      * Operand constructor.
      *
@@ -26,7 +24,6 @@ class Operand
      */
     public function __construct($value)
     {
-        $this->values = new SplObjectStorage();
         $this->setCallback($value);
     }
 
@@ -42,15 +39,6 @@ class Operand
         }
         $this->callback = Closure::fromCallable($value)
             ->bindTo($this);
-    }
-
-    public function reset(?Value $value = null)
-    {
-        if (!is_null($value)) {
-            $this->values->detach($value);
-        } else {
-            $this->values = new SplObjectStorage();
-        }
     }
 
     /**
@@ -74,13 +62,10 @@ class Operand
      */
     public function express(Value $value): bool
     {
-        if (!$this->values->contains($value)) {
-            $v = $this->callback;
-            while (is_callable($v)) {
-                $v = value_of($v, $value);
-            }
-            $this->values->attach($value, (bool) $v);
+        $c = $this->callback;
+        while (is_callable($c)) {
+            $c = value_of($c, $value);
         }
-        return (bool) $this->values[$value];
+        return (bool) $c;
     }
 }
