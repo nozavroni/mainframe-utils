@@ -11,8 +11,10 @@ namespace Mainframe\Utils\Assert\Rule;
 
 use Mainframe\Utils\Assert\Value;
 
-interface RuleInterface
+class IsNumericRule extends Rule
 {
-    public function validate(Value $value): bool;
-    public function getDescription(): string;
+    public function validate(Value $value): bool
+    {
+        return is_numeric($value());
+    }
 }

@@ -10,7 +10,17 @@
 
 namespace Mainframe\Utils\Assert\Rule;
 
+use function Mainframe\Utils\str;
+
 abstract class Rule implements RuleInterface
 {
+    public function getName(): string
+    {
+        return str(static::class)->afterLast('\\');
+    }
 
+    public function getDescription(): string
+    {
+        return '';
+    }
 }
