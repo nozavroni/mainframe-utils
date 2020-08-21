@@ -50,4 +50,5 @@ class ContainerTest extends MainframeTestCase
         $this->assertEquals('none', $val, 'Testing to ensure that default was returned (meaning an exception was suppressed)');
 
     }
+
 }

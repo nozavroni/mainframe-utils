@@ -10,6 +10,7 @@
 namespace Assert;
 
 use Mainframe\Utils\Assert\A;
+use Mainframe\Utils\Assert\Rule\IsAlphaRule;
 use Mainframe\Utils\Assert\RuleSet;
 use Mainframe\Utils\Assert\Value;
 use MainframeTest\Utils\MainframeTestCase;
@@ -81,6 +82,34 @@ class AssertTest extends MainframeTestCase
         $this->assertFalse($assert->isValid('23'));
         $this->assertFalse($assert->isValid('one'));
         $this->assertFalse($assert->isValid('876678'));
+    }
+
+    public function testWhenOperator()
+    {
+        $assert = new RuleSet();
+        $assert->when(
+            fn (Value $v) => $v->isAlpha(),
+            fn (Value $v) => $v->matches('asdf\w+'),
+            fn (Value $v) => $v->matches('\d+')
+        );
+        $this->assertTrue($assert->isValid('asdflkjkljen'));
+        $this->assertTrue($assert->isValid('4352345'));
+        $this->assertFalse($assert->isValid('fffff'));
+        $this->assertFalse($assert->isValid('fff33333'));
+    }
+
+    public function testUnlessOperator()
+    {
+        $assert = new RuleSet();
+        $assert->unless(
+            fn (Value $v) => $v->isNumeric(),
+            fn (Value $v) => $v->matches('asdf\w+'),
+            fn (Value $v) => $v->matches('\d+')
+        );
+        $this->assertTrue($assert->isValid('asdflkjkljen'));
+        $this->assertTrue($assert->isValid('4352345'));
+        $this->assertFalse($assert->isValid('fffff'));
+        $this->assertFalse($assert->isValid('fff33333'));
     }
 
 

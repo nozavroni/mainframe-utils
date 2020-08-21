@@ -46,7 +46,7 @@ abstract class Operator implements OperatorInterface
      */
     public function __set($name, $value)
     {
-        Data::set($this->operands, $name, $value);
+        $this->setOperand($value, $name);
     }
 
     /**
