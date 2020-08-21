@@ -13,19 +13,36 @@ use Mainframe\Utils\Assert\Value;
 
 class MatchesRule extends Rule
 {
+    /** @var string The pattern to match */
     protected string $pattern;
 
+    /**
+     * Rule constructor
+     *
+     * @param string $pattern The match pattern
+     */
     public function __construct(string $pattern)
     {
         $this->pattern = $pattern;
     }
 
+    /**
+     * Validate the rule
+     *
+     * @param Value $value The value to validate
+     * @return bool
+     */
     public function validate(Value $value): bool
     {
         $pattern = preg_quote($this->pattern, '/');
         return (bool) preg_match("/^{$pattern}$/", $value());
     }
 
+    /**
+     * Get a human-friendly description for this rule
+     *
+     * @return string
+     */
     public function getDescription(): string
     {
         return

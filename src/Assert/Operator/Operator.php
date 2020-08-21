@@ -63,11 +63,15 @@ abstract class Operator implements OperatorInterface
     }
 
     /**
-     * Allows the calling of operands as methods [ $this->left($value) ]
+     * Allows the calling of operands as methods
+     * If you call an operand using property syntax, you will get the callback it consists of. If you
+     * call it using method syntax, it will actually invoke the callback using whatever value you pass
+     * to it (because of this method)
      *
-     * @param $name string
-     * @param $arguments array
-     * @return mixed
+     * @param $name string The operand name (or position)
+     * @param $arguments array The arguments to pass to the operand
+     * @return bool
+     * @throws BadMethodCallException If $name is not a valid operand name/position.
      */
     public function __call($name, $arguments): bool
     {
@@ -83,8 +87,7 @@ abstract class Operator implements OperatorInterface
      * The closure accepts a Value object which it can use to perform validation checks and such.
      * The closure is also bound to its local rule set so that you can do more operations using $this
      *
-     * @return mixed
-     * @link https://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.invoke
+     * @return Closure
      */
     public function __invoke(): Closure
     {
@@ -92,6 +95,12 @@ abstract class Operator implements OperatorInterface
         return $closure;
     }
 
+    /**
+     * Perform the operation
+     *
+     * @param Value $value The value to validate
+     * @return bool
+     */
     abstract protected function operate(Value $value): bool;
 
 }

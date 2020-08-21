@@ -14,11 +14,21 @@ use function Mainframe\Utils\str;
 
 abstract class Rule implements RuleInterface
 {
+    /**
+     * Get a human-friendly name for this rule
+     *
+     * @return string
+     */
     public function getName(): string
     {
         return str(static::class)->afterLast('\\');
     }
 
+    /**
+     * Get a human-friendly description for this rule
+     *
+     * @return string
+     */
     public function getDescription(): string
     {
         return '';

@@ -15,6 +15,7 @@ use SplObjectStorage;
 
 class Operand
 {
+    /** @var Closure The callback that drives this operand */
     protected Closure $callback;
 
     /**

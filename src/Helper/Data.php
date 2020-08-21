@@ -305,6 +305,9 @@ class Data
 
         // if items is an object...
         if (is_object($items)) {
+            if ($items instanceof ArrayObject) {
+                return $items->getArrayCopy();
+            }
             // try a few different ways to convert it...
             if (method_exists($items, 'toArray')) {
                 return $items->toArray();
