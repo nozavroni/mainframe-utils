@@ -10,6 +10,7 @@
 namespace Mainframe\Utils\Assert\Rule;
 
 use Mainframe\Utils\Assert\Value;
+use function Mainframe\Utils\str;
 
 class MatchesRule extends Rule
 {
@@ -34,8 +35,7 @@ class MatchesRule extends Rule
      */
     public function validate(Value $value): bool
     {
-        $pattern = preg_quote($this->pattern, '/');
-        return (bool) preg_match("/^{$pattern}$/", $value());
+        return (bool) preg_match("/^{$this->pattern}$/", $value());
     }
 
     /**

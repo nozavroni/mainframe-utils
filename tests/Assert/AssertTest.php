@@ -63,6 +63,25 @@ class AssertTest extends MainframeTestCase
         $this->assertTrue($assert->isValid($good));
         $this->assertFalse($assert->isValid($bad));
         $this->assertFalse($assert->isValid($bad2));
-
     }
+
+    public function testOrOperator()
+    {
+        $assert = new RuleSet();
+        $assert->or(
+            fn (Value $v) => $v->matches('[a-z]+\d+'),
+            fn (Value $v) => $v->regex('/^abc/')
+        );
+        $this->assertTrue($assert->isValid('asdfasdfasdf1123'));
+        $this->assertTrue($assert->isValid('abcasldkjf2'));
+        $this->assertTrue($assert->isValid('abc123'));
+        $this->assertTrue($assert->isValid('s5'));
+        $this->assertTrue($assert->isValid('a3'));
+        $this->assertFalse($assert->isValid('zzzzzzzz'));
+        $this->assertFalse($assert->isValid('23'));
+        $this->assertFalse($assert->isValid('one'));
+        $this->assertFalse($assert->isValid('876678'));
+    }
+
+
 }

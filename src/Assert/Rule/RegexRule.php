@@ -22,8 +22,7 @@ class RegexRule extends Rule
 
     public function validate(Value $value): bool
     {
-        $pattern = preg_quote($this->pattern, '/');
-        return (bool) preg_match("/{$pattern}/", $value());
+        return (bool) preg_match($this->pattern, $value());
     }
 
     public function getDescription(): string

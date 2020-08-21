@@ -539,6 +539,27 @@ class Data
     }
 
     /**
+     * Expect than any value in the collection is equal to another value
+     * This method does exactly what "assert" does except that it will return true if ANY item asserts true.
+     *
+     * @param callable|null $func Expect callback
+     * @param bool $expected Expected value from callback
+     *
+     * @return bool
+     */
+    public static function any($items, ?callable $func = null, $expected = true): bool
+    {
+        $index = 0;
+        foreach (Data::toArray($items) as $key => $val) {
+            if ($expected == value_of($func, $val, $key, $index++)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * METHODS for querying data within an associative array or similar data structure
      * by string functions, arithmetic, etc.
      */
