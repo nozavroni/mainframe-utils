@@ -10,12 +10,11 @@
 namespace Mainframe\Utils\Assert\Rule;
 
 use Mainframe\Utils\Assert\Value;
-use function Mainframe\Utils\str;
 
-class NotNullRule extends Rule
+class IsCallableRule extends Rule
 {
     public function validate(Value $value): bool
     {
-        return $value() !== null;
+        return is_callable($value());
     }
 }

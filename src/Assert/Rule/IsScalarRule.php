@@ -10,12 +10,11 @@
 namespace Mainframe\Utils\Assert\Rule;
 
 use Mainframe\Utils\Assert\Value;
-use function Mainframe\Utils\str;
 
-class NotEmptyRule extends Rule
+class IsScalarRule extends Rule
 {
     public function validate(Value $value): bool
     {
-        return !empty($value->getValue());
+        return is_scalar($value());
     }
 }

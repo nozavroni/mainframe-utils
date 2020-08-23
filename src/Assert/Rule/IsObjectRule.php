@@ -11,10 +11,10 @@ namespace Mainframe\Utils\Assert\Rule;
 
 use Mainframe\Utils\Assert\Value;
 
-class NullRule extends Rule
+class IsObjectRule extends Rule
 {
     public function validate(Value $value): bool
     {
-        return null === $value();
+        return is_object($value());
     }
 }
