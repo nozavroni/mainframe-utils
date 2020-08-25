@@ -21,6 +21,8 @@ trait Raisable
 {
     protected static $defaultMsg = 'A problem occurred';
 
+    protected static $replFormat = '{%%%s}';
+
     /**
      * Essentially this is just a different way to throw an exception where no message is required, in fact
      * no arguments at all are. And the exception message works as sprintf() does. This just makes it cleaner
@@ -67,14 +69,22 @@ trait Raisable
             'type' => self::class,
             'date' => $dt->format(DATE),
             'time' => $dt->format(TIME),
+            'microtime' => microtime(true),
             'datetime' => $dt->format(DATE . ' ' . TIME),
             'timestamp' => $dt->getTimestamp(),
+            'timezone' => date_default_timezone_get(),
             'previous' => is_object($throwable) ? get_class($throwable) : 'unknown',
+            'classname' => \Mainframe\Utils\str(self::class)->afterLast('\\'),
+            'file' => __FILE__,
+            'dir' => __DIR__,
+            'class' => get_called_class(),
+            'user' => get_current_user(),
+            'parent' => get_parent_class(),
         ];
 
         return new static (
             vsprintf (
-                Str::template($str, $args + $predefined, '{%%%s}'),
+                Str::template($str, $args + $predefined, static::$replFormat),
                 array_filter($args, fn ($key) => is_int($key), ARRAY_FILTER_USE_KEY)
             ),
             0,

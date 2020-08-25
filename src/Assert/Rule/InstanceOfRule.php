@@ -9,7 +9,9 @@
  */
 namespace Mainframe\Utils\Assert\Rule;
 
+use Mainframe\Utils\Assert\Exception\RuleException;
 use Mainframe\Utils\Assert\Value;
+use Mainframe\Utils\Helper\Data;
 
 /**
  * @property object|string|array<object|string> $classes Either a class, an object, or an array of classes and/or objects
@@ -21,17 +23,35 @@ class InstanceOfRule extends Rule
         if (!is_array($class)) {
             $class = [$class];
         }
-        $classes = [];
-        foreach ($class as $c) {
-            if (is_object($c)) {
-                $classes[] = $c;
+        $this->classes = Data::map (
+            $class,
+            function ($class, $k, $i) {
+                if (!is_string($class)) {
+                    RuleException::raiseUnless(is_object($class), 'Invalid argument for {%class}');
+                    $class = get_class($class);
+                }
+                RuleException::raiseUnless(class_exists($class) || interface_exists($class), 'Invalid class/interface name: %s', [$class]);
+                return $class;
             }
-        }
-        $this->classes = $classes;
+        );
     }
 
     public function validate(Value $value): bool
     {
-        return $value() instanceof $this->classes;
+        return Data::any($this->classes, fn ($class) => $value() instanceof $class);
     }
+
+    /**
+     * Get a human-friendly description for this rule
+     *
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return
+            'Assert that value is an instance of a given class or object. Can provide an array of classes and/or ' .
+            'objects if you would like to assert the value is an instance of one of them.';
+    }
+
+
 }

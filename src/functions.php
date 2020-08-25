@@ -13,8 +13,8 @@ use Mainframe\Action\Exception\BreakException;
 use Mainframe\Action\Exception\FailedAttemptException;
 use Mainframe\Utils\Data\Collection;
 use Mainframe\Utils\Data\CollectionInterface;
+use Mainframe\Utils\Helper\Data;
 use function GuzzleHttp\Psr7\stream_for;
-use function Symfony\Component\String\u as str; // I think str is more useful
 
 /**
  * Global Utility Functions
@@ -52,10 +52,10 @@ if (!function_exists('complement')) {
      * @param callable $f The callable to "complement"
      * @return callable
      */
-    function complement(callable $f)
+    function complement(callable $func)
     {
-        return function (...$args) use ($f) {
-            return !$f(...$args);
+        return function (...$args) use ($func) {
+            return !value_of($func, ...$args);
         };
     }
 }
@@ -77,9 +77,9 @@ if (!function_exists('tap')) {
      * @param callable $callback The callback to "tap" it with
      * @return mixed
      */
-    function tap($value, $f)
+    function tap($value, $func)
     {
-        $f($value);
+        value_of($func, $value);
         return $value;
     }
 }
@@ -96,7 +96,7 @@ if (!function_exists('value_of')) {
     function value_of($value, ...$args)
     {
         if (is_callable($value)) {
-            return $value(...$args);
+            return value_of($value, ...$args);
         }
         return $value;
     }
@@ -113,7 +113,7 @@ if (!function_exists('truthy')) {
      */
     function truthy($value): bool
     {
-        if ($value) {
+        if (value_of($value)) {
             return true;
         }
         return false;
@@ -131,7 +131,7 @@ if (!function_exists('falsey')) {
      */
     function falsey($value): bool
     {
-        if (!$value) {
+        if (!value_of($value)) {
             return true;
         }
         return false;
@@ -152,28 +152,7 @@ if (!function_exists('with')) {
      */
     function with($value, $func = null)
     {
-        return is_callable($func) ? $func(value_of($value)) : value_of($value);
-    }
-
-}
-
-if (!function_exists('tap')) {
-
-    /**
-     * Tap a value with a callback
-     * This is a convenience function I borrowed from Laravel. Some people absolutely despise it. I don't use it all
-     * that often, but it comes in handy from time to time. It is purely a syntactical solution. It doesn't actually DO
-     * anything. It just helps to avoid temporary variables, which I am always in support of when it comes to PHP.
-     *
-     * @param mixed $val Any value but usually an object instance, especially a fluid interface object
-     * @param callable $func A callback to run on the value
-     * @return mixed
-     * @todo Might not be a bad idea to create a "Tappable" trait that allows objects to do $obj->tap(...)
-     */
-    function tap($val, callable $func)
-    {
-        $func($val);
-        return $val;
+        return is_callable($func) ? value_of($func, value_of($value)) : value_of($value);
     }
 
 }
@@ -213,7 +192,7 @@ if (!function_exists('do_until')) {
                 break;
             }
             $sleeper();
-        } while (is_callable($condition) ? $condition($last, $i++) : $condition);
+        } while (value_of($condition, $last, $i++));
 
             return $last;
 
@@ -327,7 +306,7 @@ if (!function_exists('chain')) {
     function chain(iterable $chain, $value, ...$args)
     {
         foreach ($chain as $link) {
-            $value = $link($value, ...$args);
+            $value = value_of($link, $value, ...$args);
         }
         return $value;
     }
@@ -346,7 +325,7 @@ if (!function_exists('callchain')) {
     {
         return function ($value, ...$args) use ($chain) {
             foreach ($chain as $link) {
-                $value = $link($value, ...$args);
+                $value = value_of($link, $value, ...$args);
             }
             return $value;
         };
@@ -360,7 +339,7 @@ if (!function_exists('combine')) {
     {
         return function ($value, ...$args) use ($callables) {
             foreach ($callables as $link) {
-                $link($value, ...$args);
+                value_of($link, $value, ...$args);
             }
         };
     }
@@ -372,7 +351,7 @@ if (!function_exists('invoke_all')) {
     function invoke_all(iterable $callables, $value, ...$args): void
     {
         $func = combine($callables);
-        $func($value, ...$args);
+        value_of($func, $value, ...$args);
     }
 
 }
@@ -511,7 +490,7 @@ if (!function_exists('collect')) {
      */
     function collect($items = null): CollectionInterface
     {
-        return Collection::factory($items);
+        return Collection::create($items);
     }
 
 }
@@ -531,7 +510,7 @@ if (!function_exists('to_array')) {
      */
     function to_array($items, $force = false): array
     {
-        return \Mainframe\Utils\Helper\Data::toArray($items, $force);
+        return Data::toArray($items, $force);
     }
 
 }
@@ -590,6 +569,63 @@ if (!function_exists('typeof')) {
             }
         }
         return $type;
+    }
+
+}
+
+if (!function_exists('absolute_offset_length')) {
+
+    /**
+     * Given an array or countable, an offset (can be negative or null), and a length (also can be negative
+     * or null), and returns a two-item array containing the absolute offset and length.
+     *
+     * @param $items
+     * @param int $offset
+     * @param int|null $length
+     */
+    function absolute_offset_length($items, int $offset = null, ?int $length = null)
+    {
+        $count = Data::count($items);
+
+        if (is_null($offset)) {
+            $startoffset = 0;
+        }
+        if ($offset < 0) {
+            $startoffset = $count - abs($offset);
+        }
+        if ($offset > $count) {
+            return [0, 0];
+        }
+        if (is_null($length)) {
+            $endoffset = $count;
+        }
+        if ($length < 0) {
+            $endoffset = $count - abs($length);
+            if ($endoffset < 0) {
+                $endoffset = 0;
+            }
+        }
+
+        if (!isset($startoffset)) {
+            $startoffset = ($offset < 0) ? 0 : $offset;
+        }
+
+        if (!isset($endoffset)) {
+            $endoffset = $startoffset + $length;
+        }
+
+        if ($startoffset < 0) {
+            $startoffset = 0;
+        }
+        if ($endoffset > $count) {
+            $endoffset = $count;
+        }
+
+        if ($startoffset > $endoffset) {
+            return [0, 0];
+        }
+
+        return [$startoffset, $endoffset];
     }
 
 }

@@ -10,6 +10,7 @@
 namespace Mainframe\Utils\Data\Traits;
 
 use Mainframe\Utils\Data\CollectionInterface;
+use Mainframe\Utils\Helper\Data;
 
 trait HigherOrder
 {
@@ -117,13 +118,7 @@ trait HigherOrder
      */
     public function each(callable $func): self
     {
-        $index = 0;
-        foreach ($this->getIterator() as $key => $val) {
-            if (false === value_of($func, $val, $key, $index++)) {
-                break;
-            }
-        }
-
+        Data::each($this, $func);
         return $this;
     }
 
@@ -136,14 +131,7 @@ trait HigherOrder
      */
     public function first(?callable $func = null, $default = null)
     {
-        $index = 0;
-        foreach ($this->getIterator() as $key => $val) {
-            if (value_of($func, $val, $key, $index)) {
-                return $val;
-            }
-        }
-
-        return $default;
+        return Data::first($this, $func, $default);
     }
 
     /**
@@ -155,8 +143,7 @@ trait HigherOrder
      */
     public function last(?callable $func = null, $default = null)
     {
-        $reversed = array_reverse(to_array($this->getIterator()));
-        return static::create($reversed)->first($func, $default);
+        return Data::last($this, $func, $default);
     }
 
     /**
@@ -173,13 +160,7 @@ trait HigherOrder
      */
     public function reduce(callable $func, $initial = null)
     {
-        $index = 0;
-        $reduced = $initial;
-        foreach ($this->getIterator() as $key => $val) {
-            $reduced = value_of($func, $reduced, $val, $key, $index++);
-        }
-
-        return $reduced;
+        return Data::reduce($this, $func, $initial);
     }
 
     /**
@@ -197,14 +178,7 @@ trait HigherOrder
      */
     public function map(callable $func): CollectionInterface
     {
-        $items = [];
-
-        $index = 0;
-        foreach ($this->getIterator() as $key => $val) {
-            $items[$key] = value_of($func, $val, $key, $index++);
-        }
-
-        return static::create($items);
+        return static::create(Data::map($this, $func));
     }
 
     /**
@@ -220,19 +194,7 @@ trait HigherOrder
      */
     public function partition(?callable $func): array
     {
-        $truthy = [];
-        $falsey = [];
-        $index = 0;
-        if (is_null($func)) {
-            $func = 'truthy';
-        }
-        foreach ($this->getIterator() as $key => $value) {
-            if (value_of($func, $value, $key, $index++)) {
-                $truthy[$key] = $value;
-            } else {
-                $falsey[$key] = $value;
-            }
-        }
+        [$truthy, $falsey] = Data::partition($this, $func);
 
         // @ todo need a factory class
         return [
@@ -252,7 +214,7 @@ trait HigherOrder
      */
     public function pipe(callable $func)
     {
-        return value_of($func, $this);
+        Data::pipe($this, $func);
     }
 
 }
