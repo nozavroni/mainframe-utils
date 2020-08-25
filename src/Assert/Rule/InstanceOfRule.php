@@ -38,7 +38,7 @@ class InstanceOfRule extends Rule
 
     public function validate(Value $value): bool
     {
-        return Data::any($this->classes, fn ($class) => $value() instanceof $class);
+        return Data::any($this->classes, fn ($class, $k, $i) => $value() instanceof $class);
     }
 
     /**

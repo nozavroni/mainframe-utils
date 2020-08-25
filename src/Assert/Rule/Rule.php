@@ -10,6 +10,7 @@
 
 namespace Mainframe\Utils\Assert\Rule;
 
+use Mainframe\Utils\Assert\Value;
 use function Mainframe\Utils\str;
 
 abstract class Rule implements RuleInterface
@@ -32,5 +33,13 @@ abstract class Rule implements RuleInterface
     public function getDescription(): string
     {
         return '';
+    }
+
+    public function isValid($value): bool
+    {
+        if (!($value instanceof Value)) {
+            $value = new Value($value);
+        }
+        return $this->validate($value);
     }
 }

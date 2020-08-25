@@ -13,6 +13,8 @@ use Mainframe\Utils\Assert\Value;
 
 interface RuleInterface
 {
+    public function isValid($value): bool;
     public function validate(Value $value): bool;
     public function getDescription(): string;
+    public function getName(): string;
 }

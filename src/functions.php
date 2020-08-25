@@ -96,7 +96,7 @@ if (!function_exists('value_of')) {
     function value_of($value, ...$args)
     {
         if (is_callable($value)) {
-            return value_of($value, ...$args);
+            return $value(...$args);
         }
         return $value;
     }

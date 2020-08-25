@@ -9,6 +9,8 @@
  */
 namespace Assert;
 
+use ArrayIterator;
+use IteratorIterator;
 use Mainframe\Utils\Assert\Rule\InstanceOfRule;
 use Mainframe\Utils\Assert\Rule\MinLengthRule;
 use Mainframe\Utils\Assert\Rule\MaxLengthRule;
@@ -42,7 +44,11 @@ class RuleTest extends MainframeTestCase
         $good = new Value(new InstanceOfRule(stdClass::class));
         $bad = new Value(new stdClass());
         $rule = new InstanceOfRule(RuleInterface::class);
-        $this->assertTrue($rule->validate($good));
-        $this->assertFalse($rule->validate($bad));
+        $multigood = new InstanceOfRule([$good, $bad, stdClass::class, ArrayIterator::class]);
+        $multibad = new InstanceOfRule([new ArrayIterator([1,3,4]), ArrayIterator::class, IteratorIterator::class]);
+        $this->assertTrue($rule->isValid($good));
+        $this->assertFalse($rule->isValid($bad));
+        $this->assertTrue($multigood->isValid(new ArrayIterator([1,45,1,132])));
+        $this->assertFalse($multibad->isValid(new stdClass));
     }
 }

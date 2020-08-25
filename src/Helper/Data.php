@@ -9,6 +9,7 @@
  */
 namespace Mainframe\Utils\Helper;
 
+use ArgumentCountError;
 use ArrayAccess;
 use ArrayObject;
 use Closure;
@@ -717,11 +718,16 @@ class Data
     {
         $index = 0;
         foreach (Data::toArray($items) as $key => $val) {
-            if ($expected == $func($val, $key, $index++)) {
-                return true;
+            try {
+                if ($expected == $func($val, $key, $index++)) {
+                    return true;
+                }
+            } catch (ArgumentCountError $error) {
+                if ($expected == $func($val)) {
+                    return true;
+                }
             }
         }
-
         return false;
     }
 
