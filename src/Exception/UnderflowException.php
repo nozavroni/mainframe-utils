@@ -21,4 +21,6 @@ implements RaisableInterface, RecoverableInterface, SuppressableInterface, Swapp
         Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
+
+    protected static $defaultMsg = 'Cannot remove an item from an empty container';
 }

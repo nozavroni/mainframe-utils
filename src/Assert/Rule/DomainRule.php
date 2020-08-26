@@ -11,22 +11,26 @@ namespace Mainframe\Utils\Assert\Rule;
 
 use Mainframe\Utils\Assert\Value;
 
-class IsFalseyRule extends Rule
+class DomainRule extends Rule
 {
-    protected bool $allowWords;
+    protected bool $isHostname;
 
     /**
-     * IsTruthyRule constructor.
-     * @param bool $allowWords
+     * DomainRule constructor.
+     * @param bool $hostname
      */
-    public function __construct(bool $allowWords = false)
+    public function __construct(bool $isHostname = true)
     {
-        $this->allowWords = $allowWords;
+        $this->isHostname = $isHostname;
     }
 
-
+    /**
+     * @param Value $value
+     * @return bool
+     */
     public function validate(Value $value): bool
     {
-        return falsey($value(), $this->allowWords);
+        $flags = $this->isHostname ? FILTER_FLAG_HOSTNAME : null;
+        return (bool) filter_var($value(), FILTER_VALIDATE_DOMAIN, $flags);
     }
 }

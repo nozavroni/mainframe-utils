@@ -13,8 +13,20 @@ use Mainframe\Utils\Assert\Value;
 
 class IsFloatRule extends Rule
 {
+    protected bool $allowThousandSep;
+
+    /**
+     * IsFloatRule constructor.
+     * @param bool $allowThousandSep
+     */
+    public function __construct(bool $allowThousandSep = false)
+    {
+        $this->allowThousandSep = $allowThousandSep;
+    }
+
     public function validate(Value $value): bool
     {
-        return is_float($value());
+        $flags = $this->allowThousandSep ? FILTER_FLAG_ALLOW_THOUSAND : null;
+        return (bool) filter_var($value(), FILTER_VALIDATE_FLOAT, $flags);
     }
 }

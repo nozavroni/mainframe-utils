@@ -14,6 +14,8 @@ use Mainframe\Action\Exception\FailedAttemptException;
 use Mainframe\Utils\Data\Collection;
 use Mainframe\Utils\Data\CollectionInterface;
 use Mainframe\Utils\Helper\Data;
+use Mainframe\Utils\Streams\LazyStream;
+use Mainframe\Utils\Exception\RuntimeException;
 use function GuzzleHttp\Psr7\stream_for;
 
 /**
@@ -26,6 +28,12 @@ use function GuzzleHttp\Psr7\stream_for;
  * @todo If any of these are defined, they just quietly defer to the existing function. This could result in some
  *       extremely difficult bugs to track down. Instead. they should check if the function exists, and if it does, make
  *       a log entry with a WARNING or possibly even an ERROR saying that function was unable to be created.
+ *
+ * @todo Create a fopen() function that automatically closes its own resource. The way this would work is, instead of
+ *       calling fopen() when you want to open a file, you would use my function "file_open" or something. It would
+ *       return an object that returns a resource when called as a function. And then its destructor would close the
+ *       file handle. You could even have it be a lazy-open type deal where it doesn't actually open the file until
+ *       you attempt to use it.
  */
 
 /**
@@ -109,11 +117,17 @@ if (!function_exists('truthy')) {
      * Returns true if value is truthy
      *
      * @param mixed $value The value to check
+     * @param bool $allowWords If set to true, this will return TRUE for "1", "true", "on" and "yes"
+     *                         and FALSE for "0", "false", "off", "no", and ""
      * @return bool
      */
-    function truthy($value): bool
+    function truthy($value, $allowWords = false): bool
     {
-        if (value_of($value)) {
+        $value = value_of($value);
+        if ($allowWords) {
+            $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        }
+        if ($value) {
             return true;
         }
         return false;
@@ -127,14 +141,13 @@ if (!function_exists('falsey')) {
      * Returns true if value is falsey
      *
      * @param mixed $value The value to check
+     * @param bool $allowWords If set to true, this will return TRUE for "1", "true", "on" and "yes"
+     *                         and FALSE for "0", "false", "off", "no", and ""
      * @return bool
      */
-    function falsey($value): bool
+    function falsey($value, $allowWords = false): bool
     {
-        if (!value_of($value)) {
-            return true;
-        }
-        return false;
+        return !truthy($value, $allowWords);
     }
 
 }
@@ -626,6 +639,94 @@ if (!function_exists('absolute_offset_length')) {
         }
 
         return [$startoffset, $endoffset];
+    }
+
+}
+
+/**
+ * //--[ Streams ]--//
+ */
+
+if (!function_exists('lazy_fopen')) {
+
+    function lazy_fopen($filename, $mode, $use_include_path = false, $context = null)
+    {
+        return new LazyStream(...func_get_args());
+    }
+
+}
+
+if (!function_exists('safe_fopen')) {
+    /**
+     * Safely opens a PHP stream resource using a filename.
+     *
+     * When fopen fails, PHP normally raises a warning. This function adds an
+     * error handler that checks for errors and throws an exception instead.
+     *
+     * @param string $filename File to open
+     * @param string $mode     Mode used to open the file
+     *
+     * @return resource
+     * @throws \RuntimeException if the file cannot be opened
+     */
+    function safe_fopen($filename, $mode, $use_include_path = false, $context = null)
+    {
+        $ex = null;
+        set_error_handler(function () use ($filename, $mode, &$ex) {
+            $ex = RuntimeException::create(
+                'Unable to open %s using mode %s: %s',
+                [$filename, $mode, func_get_args()[1]]
+            );
+        });
+
+        $handle = fopen($filename, $mode, $use_include_path, $context);
+        restore_error_handler();
+
+        if ($ex) {
+            /** @var $ex RuntimeException */
+            throw $ex;
+        }
+
+        return $handle;
+    }
+}
+
+/**
+ * //--[ Bitwise Operations ]--//
+ */
+
+if (!function_exists('flag_set')) {
+
+    function flag_set(int $flag, int $option): int
+    {
+        return ($flag |= $option);
+    }
+
+}
+
+if (!function_exists('flag_unset')) {
+
+    function flag_unset(int $flag, int $option): int
+    {
+        return ($flag &= ~$option);
+    }
+
+}
+
+if (!function_exists('flag_toggle')) {
+
+    function flag_toggle(int $flag, int $option): int
+    {
+        return ($flag ^= $option);
+    }
+
+}
+
+if (!function_exists('flag_assert')) {
+
+    function flag_assert(int $flag, int $option): bool
+    {
+        return ($flag & $option) > 0;
     }
 
 }

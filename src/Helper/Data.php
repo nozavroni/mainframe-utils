@@ -13,6 +13,7 @@ use ArgumentCountError;
 use ArrayAccess;
 use ArrayObject;
 use Closure;
+use Countable;
 use Mainframe\Utils\Data\Pair;
 use Mainframe\Utils\Data\StackableInterface;
 use Mainframe\Utils\Exception\BadMethodCallException;
@@ -301,7 +302,7 @@ class Data
     }
 
     /**
-     * @param $items
+     * @param iterable|Countable $items
      * @return int
      */
     public static function count($items): int
@@ -368,8 +369,40 @@ class Data
     }
 
     /**
-     * @param $items
-     * @param mixed ...$args
+     * Assert that a list of values contains ALL of another list of values
+     *
+     * @param iterable $items The array or iterable
+     * @param iterable $values Values to check
+     * @param bool $matchKey Whether to also match the key
+     * @return bool
+     */
+    public static function containsAll($items, iterable $values, bool $matchKey = false): bool
+    {
+        return static::assert($values, fn ($v, $k, $i) => static::contains($items, $v, $matchKey ? $k : null));
+    }
+
+    /**
+     * Assert that a list of values contains ANY of another list of values
+     *
+     * @param iterable $items The array or iterable
+     * @param iterable $values Values to check
+     * @param bool $matchKey Whether to also match the key
+     * @return bool
+     */
+    public static function containsAny($items, iterable $values, bool $matchKey = false): bool
+    {
+        return static::any($values, fn ($v, $k, $i) => static::contains($items, $v, $matchKey ? $k : null));
+    }
+
+    /**
+     * Loop through an iterable full of either callbacks or values and, if they are callbacks,
+     * invoke them and return their value, passing any additional args to them that were passed
+     * to this method. If not a callable, just keep the value as-is. Finally, return the result
+     *
+     * This method is useful in situations where you have a bunch of callbacks that need to be invoked
+     *
+     * @param callable|mixed $items An iterable containing callbacks and/or values
+     * @param mixed ...$args Any additional args that should be passed to the callbacks
      * @return array
      */
     public static function resolve($items, ...$args): array

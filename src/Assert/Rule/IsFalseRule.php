@@ -11,22 +11,10 @@ namespace Mainframe\Utils\Assert\Rule;
 
 use Mainframe\Utils\Assert\Value;
 
-class IsFalseyRule extends Rule
+class IsFalseRule extends Rule
 {
-    protected bool $allowWords;
-
-    /**
-     * IsTruthyRule constructor.
-     * @param bool $allowWords
-     */
-    public function __construct(bool $allowWords = false)
-    {
-        $this->allowWords = $allowWords;
-    }
-
-
     public function validate(Value $value): bool
     {
-        return falsey($value(), $this->allowWords);
+        return false === $value();
     }
 }

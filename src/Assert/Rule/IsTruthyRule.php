@@ -13,8 +13,20 @@ use Mainframe\Utils\Assert\Value;
 
 class IsTruthyRule extends Rule
 {
+    protected bool $allowWords;
+
+    /**
+     * IsTruthyRule constructor.
+     * @param bool $allowWords
+     */
+    public function __construct(bool $allowWords = false)
+    {
+        $this->allowWords = $allowWords;
+    }
+
+
     public function validate(Value $value): bool
     {
-        return truthy($value());
+        return truthy($value(), $this->allowWords);
     }
 }

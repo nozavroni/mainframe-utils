@@ -21,4 +21,6 @@ implements RaisableInterface, RecoverableInterface, SuppressableInterface, Swapp
         Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
+
+    protected static $defaultMsg = 'Invalid argument';
 }

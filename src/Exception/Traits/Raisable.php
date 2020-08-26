@@ -10,18 +10,42 @@
 namespace Mainframe\Utils\Exception\Traits;
 
 use DateTime;
+use Mainframe\Utils\Exception\LogicException;
 use Mainframe\Utils\Exception\RaisableInterface;
+use Mainframe\Utils\Helper\Data;
 use Mainframe\Utils\Helper\Str;
 use Throwable;
+use function Mainframe\Utils\str;
 
 const DATE = 'Y-m-d';
 const TIME = 'g:i:sa';
 
 trait Raisable
 {
-    protected static $defaultMsg = 'A problem occurred';
+    /** @var string The default message */
+    protected static $defaultMsg = 'An error occurred: {%msg}';
 
+    /** @var string Repl format */
     protected static $replFormat = '{%%%s}';
+
+    /** @var array Required arguments */
+    protected static $requiredArgs = [];
+
+    /**
+     * @return array
+     */
+    public static function getRequiredArgs(): array
+    {
+        return static::$requiredArgs;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDefaultMessage(): string
+    {
+        return static::$defaultMsg;
+    }
 
     /**
      * Essentially this is just a different way to throw an exception where no message is required, in fact
@@ -47,14 +71,14 @@ trait Raisable
         throw static::create($str, $args, $throwable);
     }
 
-    public static function raiseIf($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null)
+    public static function raiseIf($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null): void
     {
         if (value_of($condition)) {
             static::raise($str, $args, $throwable);
         }
     }
 
-    public static function raiseUnless($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null)
+    public static function raiseUnless($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null): void
     {
         if (!value_of($condition)) {
             static::raise($str, $args, $throwable);
@@ -63,8 +87,10 @@ trait Raisable
 
     public static function create(?string $str = null, array $args = [], ?Throwable $throwable = null): self
     {
-        $str ??= static::$defaultMsg;
+        $str ??= static::getDefaultMessage();
+        $required = static::getRequiredArgs();
         $dt = new DateTime;
+        $classname = str(self::class)->afterLast('\\');
         $predefined = [
             'type' => self::class,
             'date' => $dt->format(DATE),
@@ -73,18 +99,20 @@ trait Raisable
             'datetime' => $dt->format(DATE . ' ' . TIME),
             'timestamp' => $dt->getTimestamp(),
             'timezone' => date_default_timezone_get(),
-            'previous' => is_object($throwable) ? get_class($throwable) : 'unknown',
-            'classname' => \Mainframe\Utils\str(self::class)->afterLast('\\'),
-            'file' => __FILE__,
-            'dir' => __DIR__,
             'class' => get_called_class(),
             'user' => get_current_user(),
             'parent' => get_parent_class(),
+            'msg' => 'Unknown problem - ' . $classname
         ];
+
+        $args = $args + $predefined;
+        if (empty($required) || !Data::containsAll(Data::keys($args), $required)) {
+            throw new LogicException('Missing some required args for raisable exception');
+        }
 
         return new static (
             vsprintf (
-                Str::template($str, $args + $predefined, static::$replFormat),
+                Str::template($str, $args, static::$replFormat),
                 array_filter($args, fn ($key) => is_int($key), ARRAY_FILTER_USE_KEY)
             ),
             0,

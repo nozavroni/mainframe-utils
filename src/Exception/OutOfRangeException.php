@@ -20,4 +20,6 @@ implements RaisableInterface, RecoverableInterface, SuppressableInterface, Swapp
         Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
+
+    protected static $defaultMsg = 'Illegal index was requested';
 }
