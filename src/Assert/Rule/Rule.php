@@ -31,7 +31,7 @@ abstract class Rule implements RuleInterface
      * @return string
      */
     public function getDescription(): string
-    {xxxxx
+    {
         return '';
     }
 

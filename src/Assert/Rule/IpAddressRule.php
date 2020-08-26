@@ -35,16 +35,16 @@ class IpAddressRule extends Rule
     {
         $flags = 0;
         if ($this->options['ipv4']) {
-            $flags &= FILTER_FLAG_IPV4;
+            flag_set($flags, FILTER_FLAG_IPV4);
         }
         if ($this->options['ipv6']) {
-            $flags &= FILTER_FLAG_IPV6;
+            flag_set($flags, FILTER_FLAG_IPV6);
         }
         if (!$this->options['allowPrivRange']) {
-            $flags &= FILTER_FLAG_NO_PRIV_RANGE;
+            flag_set($flags, FILTER_FLAG_NO_PRIV_RANGE);
         }
         if (!$this->options['allowResRange']) {
-            $flags &= FILTER_FLAG_NO_RES_RANGE;
+            flag_set($flags, FILTER_FLAG_NO_RES_RANGE);
         }
         return (bool) filter_var($value(), FILTER_VALIDATE_IP, $flags);
     }

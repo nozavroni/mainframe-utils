@@ -11,29 +11,26 @@ namespace Mainframe\Utils\Assert\Rule;
 
 use Mainframe\Utils\Assert\Value;
 
-class DomainRule extends Rule
+class EqRule extends Rule
 {
-    protected bool $isHostname;
+    /** @var mixed The other value to compare against */
+    protected $other;
 
     /**
-     * DomainRule constructor.
-     * @param bool $hostname
+     * SameRule constructor.
+     * @param mixed $other The other value to compare against
      */
-    public function __construct(bool $isHostname = true)
+    public function __construct($other)
     {
-        $this->isHostname = $isHostname;
+        $this->other = $other;
     }
 
     /**
-     * @param Value $value
+     * @param Value $value The value to compare against the input
      * @return bool
      */
     public function validate(Value $value): bool
     {
-        $flags = 0;
-        if ($this->isHostname) {
-            flag_set($flags, FILTER_FLAG_HOSTNAME);
-        }
-        return (bool) filter_var($value(), FILTER_VALIDATE_DOMAIN, $flags);
+        return $this->other == $value();
     }
 }

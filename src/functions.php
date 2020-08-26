@@ -697,7 +697,7 @@ if (!function_exists('safe_fopen')) {
 
 if (!function_exists('flag_set')) {
 
-    function flag_set(int $flag, int $option): int
+    function flag_set(int &$flag, int $option): int
     {
         return ($flag |= $option);
     }
@@ -706,7 +706,7 @@ if (!function_exists('flag_set')) {
 
 if (!function_exists('flag_unset')) {
 
-    function flag_unset(int $flag, int $option): int
+    function flag_unset(int &$flag, int $option): int
     {
         return ($flag &= ~$option);
     }
@@ -715,7 +715,7 @@ if (!function_exists('flag_unset')) {
 
 if (!function_exists('flag_toggle')) {
 
-    function flag_toggle(int $flag, int $option): int
+    function flag_toggle(int &$flag, int $option): int
     {
         return ($flag ^= $option);
     }
