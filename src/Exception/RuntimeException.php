@@ -22,5 +22,8 @@ implements RaisableInterface, RecoverableInterface, SuppressableInterface, Swapp
         Traits\Recoverable,
         Traits\Suppressable;
 
-    protected static $defaultMsg = 'There was a runtime error';
+    public static function getDefaultMessage(): string
+    {
+        return 'There was a runtime error';
+    }
 }

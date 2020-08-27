@@ -11,5 +11,8 @@ namespace Mainframe\Utils\Exception;
 
 class AssertionException extends RangeException
 {
-    protected static $defaultMsg = 'Assertion failed';
+    public static function getDefaultMessage(): string
+    {
+        return 'Assertion failed';
+    }
 }

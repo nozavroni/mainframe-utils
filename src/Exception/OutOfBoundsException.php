@@ -21,5 +21,8 @@ implements RaisableInterface, RecoverableInterface, SuppressableInterface, Swapp
         Traits\Recoverable,
         Traits\Suppressable;
 
-    protected static $defaultMsg = 'Value is not a valid key';
+    public static function getDefaultMessage(): string
+    {
+        return 'Value is not a valid key';
+    }
 }

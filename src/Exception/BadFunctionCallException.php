@@ -23,5 +23,8 @@ implements RaisableInterface, RecoverableInterface, SuppressableInterface, Swapp
         Traits\Recoverable,
         Traits\Suppressable;
 
-    protected static $defaultMsg = 'Bad function call';
+    public static function getDefaultMessage(): string
+    {
+        return 'Bad function call';
+    }
 }

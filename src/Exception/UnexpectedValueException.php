@@ -28,5 +28,8 @@ implements RaisableInterface, RecoverableInterface, SuppressableInterface
         Traits\Recoverable,
         Traits\Suppressable;
 
-    protected static $defaultMsg = 'Unexpected value';
+    public static function getDefaultMessage(): string
+    {
+        return 'Unexpected value';
+    }
 }

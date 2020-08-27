@@ -9,15 +9,22 @@
  */
 namespace Mainframe\Utils\Helper;
 
-use Closure;
-use Mainframe\Utils\Exception\InvalidArgumentException;
 use Mainframe\Utils\Strings\MString;
 use function Symfony\Component\String\u;
 
 class Str
 {
+    // slug delimiter character
     const SLUG_DELIM = '-';
 
+    /**
+     * Fill in a string template with data
+     *
+     * @param string|array $template Either a template string or an array of them
+     * @param array $context This array is used to fill in variables in the template
+     * @param string $repl_format This is the format of replacement strings in the template
+     * @return string|string[]
+     */
     public static function template($template, array $context, string $repl_format = '%s')
     {
         $context = array_filter($context, fn ($val) => is_string($val));
@@ -40,6 +47,14 @@ class Str
         );
     }
 
+    /**
+     * Just like the template method, but it uses preg_* functions rather than sprintf
+     *
+     * @param string|array $template Either a template string or an array of them
+     * @param array $context This array is used to fill in variables in the template
+     * @param string $preg_format This is the format of replacement strings in the template
+     * @return string|string[]
+     */
     public static function preg_template($template, array $context, string $preg_format = '/{%(\w+)(?::(\w+))?}/')
     {
         $context = array_filter($context, fn ($val) => is_string($val));
@@ -58,7 +73,14 @@ class Str
         );
     }
 
-    public static function random_chars($num, $chars = null)
+    /**
+     * Produce a string of random characters of x length
+     *
+     * @param int $num
+     * @param string|null $chars
+     * @return string
+     */
+    public static function random_chars(int $num, ?string $chars = null)
     {
         $chars ??= '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $count = strlen($chars);
@@ -71,12 +93,14 @@ class Str
     }
 
     /**
-     * @param mixed $value The value to create a new string wt=ijh2kojkooo
+     * A factory method to create new MString objects
+     *
+     * @param mixed $value The value to create a new string with
      * @return MString
      */
     public static function make($value): MString
     {
-        return new MString(u((string)$value));
+        return Str::make($value);
     }
 
 //    public static function compare()

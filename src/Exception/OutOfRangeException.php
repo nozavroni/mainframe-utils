@@ -21,5 +21,8 @@ implements RaisableInterface, RecoverableInterface, SuppressableInterface, Swapp
         Traits\Recoverable,
         Traits\Suppressable;
 
-    protected static $defaultMsg = 'Illegal index was requested';
+    public static function getDefaultMessage(): string
+    {
+        return 'Illegal index was requested';
+    }
 }

@@ -22,21 +22,15 @@ const TIME = 'g:i:sa';
 
 trait Raisable
 {
-    /** @var string The default message */
-    protected static $defaultMsg = 'An error occurred: {%msg}';
-
     /** @var string Repl format */
     protected static $replFormat = '{%%%s}';
-
-    /** @var array Required arguments */
-    protected static $requiredArgs = [];
 
     /**
      * @return array
      */
     public static function getRequiredArgs(): array
     {
-        return static::$requiredArgs;
+        return [];
     }
 
     /**
@@ -44,7 +38,7 @@ trait Raisable
      */
     public static function getDefaultMessage(): string
     {
-        return static::$defaultMsg;
+        return 'An error occurred: {%msg}';
     }
 
     /**

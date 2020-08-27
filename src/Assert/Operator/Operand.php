@@ -11,7 +11,6 @@ namespace Mainframe\Utils\Assert\Operator;
 
 use Closure;
 use Mainframe\Utils\Assert\Value;
-use SplObjectStorage;
 
 class Operand
 {

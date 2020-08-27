@@ -25,5 +25,8 @@ implements RaisableInterface, RecoverableInterface, SuppressableInterface, Swapp
         Traits\Suppressable,
         Traits\Swappable;
 
-    protected static $defaultMsg = 'There was a type error';
+    public static function getDefaultMessage(): string
+    {
+        return 'There was a type error';
+    }
 }

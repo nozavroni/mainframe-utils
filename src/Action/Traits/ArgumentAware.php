@@ -10,31 +10,31 @@
  */
 namespace Mainframe\Support\Action\Traits;
 
-use Mainframe\Data\CollectionInterface;
+use Mainframe\Utils\Helper\Data;
 
 trait ArgumentAware
 {
-    protected CollectionInterface $args;
+    protected array $args = [];
 
     public function setArgs(iterable $args)
     {
-        $this->args = collect($args);
+        $this->args = Data::toIndex($args);
         return $this;
     }
 
     public function setArg($name, $value)
     {
-        $this->args->set($name, $value);
+        Data::set($this->args, $name, $value);
         return $this;
     }
 
     public function getArgs(): array
     {
-        return $this->args->toArray();
+        return $this->args;
     }
 
     public function getArg($name)
     {
-        return $this->args->get($name);
+        return Data::get($this->args, $name);
     }
 }

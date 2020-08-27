@@ -21,5 +21,8 @@ implements RaisableInterface, RecoverableInterface, SuppressableInterface, Swapp
         Traits\Recoverable,
         Traits\Suppressable;
 
-    protected static $defaultMsg = 'Container is full';
+    public static function getDefaultMessage(): string
+    {
+        return 'Container is full';
+    }
 }

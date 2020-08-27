@@ -15,7 +15,6 @@ abstract class AbstractAction
     /**
      * Invoke the action
      *
-     * @param mixed $args,... Allow unlimited args
      * @return mixed
      */
     public function __invoke(...$args)
@@ -24,10 +23,7 @@ abstract class AbstractAction
     }
 
     /**
-     * Perform the action
-     *
-     * @param mixed $args,... Allow unlimited args
-     * @return mixed
+\     * @return mixed
      */
     abstract protected function perform(...$args);
 

@@ -17,6 +17,6 @@ interface RaisableInterface
     public static function getRequiredArgs(): array;
     public static function create(?string $str = null, array $args = [], ?Throwable $throwable = null): self;
     public static function raise(?string $str = null, array $args = [], ?Throwable $throwable = null): void;
-    public static function raiseIf($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null): self;
-    public static function raiseUnless($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null): self;
+    public static function raiseIf($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null): void;
+    public static function raiseUnless($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null): void;
 }
