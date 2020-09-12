@@ -7,14 +7,23 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Exception;
 
+/**
+ * Exception thrown if a callback refers to an undefined method or if some arguments are missing.
+ */
 class BadMethodCallException
-extends \BadMethodCallException
-implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
+    extends \BadMethodCallException
+    implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
         Traits\Swappable,
         Traits\Recoverable,
         Traits\Suppressable;
+
+    public static function getDefaultMessage(): string
+    {
+        return 'Bad method call';
+    }
 }

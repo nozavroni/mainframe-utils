@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Exception;
 
 /**
@@ -14,8 +15,8 @@ namespace Mainframe\Utils\Exception;
  * other than under/overflow. This is the runtime version of DomainException.
  */
 class RangeException
-extends \RangeException
-implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
+    extends \RangeException
+    implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
         Traits\Swappable,

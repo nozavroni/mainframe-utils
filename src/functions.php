@@ -9,11 +9,14 @@
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
 
-use Mainframe\Data\Collection;
 use Mainframe\Action\Exception\BreakException;
 use Mainframe\Action\Exception\FailedAttemptException;
+use Mainframe\Utils\Container\Collection;
+use Mainframe\Utils\Container\CollectionInterface;
+use Mainframe\Utils\Helper\Data;
+use Mainframe\Utils\Streams\LazyStream;
+use Mainframe\Utils\Exception\RuntimeException;
 use function GuzzleHttp\Psr7\stream_for;
-use function Symfony\Component\String\u as str; // I think str is more useful
 
 /**
  * Global Utility Functions
@@ -25,6 +28,12 @@ use function Symfony\Component\String\u as str; // I think str is more useful
  * @todo If any of these are defined, they just quietly defer to the existing function. This could result in some
  *       extremely difficult bugs to track down. Instead. they should check if the function exists, and if it does, make
  *       a log entry with a WARNING or possibly even an ERROR saying that function was unable to be created.
+ *
+ * @todo Create a fopen() function that automatically closes its own resource. The way this would work is, instead of
+ *       calling fopen() when you want to open a file, you would use my function "file_open" or something. It would
+ *       return an object that returns a resource when called as a function. And then its destructor would close the
+ *       file handle. You could even have it be a lazy-open type deal where it doesn't actually open the file until
+ *       you attempt to use it.
  */
 
 /**
@@ -51,10 +60,10 @@ if (!function_exists('complement')) {
      * @param callable $f The callable to "complement"
      * @return callable
      */
-    function complement(callable $f)
+    function complement(callable $func)
     {
-        return function (...$args) use ($f) {
-            return !$f(...$args);
+        return function (...$args) use ($func) {
+            return !value_of($func, ...$args);
         };
     }
 }
@@ -76,9 +85,9 @@ if (!function_exists('tap')) {
      * @param callable $callback The callback to "tap" it with
      * @return mixed
      */
-    function tap($value, $f)
+    function tap($value, $func)
     {
-        $f($value);
+        value_of($func, $value);
         return $value;
     }
 }
@@ -108,10 +117,16 @@ if (!function_exists('truthy')) {
      * Returns true if value is truthy
      *
      * @param mixed $value The value to check
+     * @param bool $allowWords If set to true, this will return TRUE for "1", "true", "on" and "yes"
+     *                         and FALSE for "0", "false", "off", "no", and ""
      * @return bool
      */
-    function truthy($value): bool
+    function truthy($value, $allowWords = false): bool
     {
+        $value = value_of($value);
+        if ($allowWords) {
+            $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        }
         if ($value) {
             return true;
         }
@@ -126,14 +141,13 @@ if (!function_exists('falsey')) {
      * Returns true if value is falsey
      *
      * @param mixed $value The value to check
+     * @param bool $allowWords If set to true, this will return TRUE for "1", "true", "on" and "yes"
+     *                         and FALSE for "0", "false", "off", "no", and ""
      * @return bool
      */
-    function falsey($value): bool
+    function falsey($value, $allowWords = false): bool
     {
-        if (!$value) {
-            return true;
-        }
-        return false;
+        return !truthy($value, $allowWords);
     }
 
 }
@@ -151,28 +165,7 @@ if (!function_exists('with')) {
      */
     function with($value, $func = null)
     {
-        return is_callable($func) ? $func(value_of($value)) : value_of($value);
-    }
-
-}
-
-if (!function_exists('tap')) {
-
-    /**
-     * Tap a value with a callback
-     * This is a convenience function I borrowed from Laravel. Some people absolutely despise it. I don't use it all
-     * that often, but it comes in handy from time to time. It is purely a syntactical solution. It doesn't actually DO
-     * anything. It just helps to avoid temporary variables, which I am always in support of when it comes to PHP.
-     *
-     * @param mixed $val Any value but usually an object instance, especially a fluid interface object
-     * @param callable $func A callback to run on the value
-     * @return mixed
-     * @todo Might not be a bad idea to create a "Tappable" trait that allows objects to do $obj->tap(...)
-     */
-    function tap($val, callable $func)
-    {
-        $func($val);
-        return $val;
+        return is_callable($func) ? value_of($func, value_of($value)) : value_of($value);
     }
 
 }
@@ -193,7 +186,7 @@ if (!function_exists('do_until')) {
     {
         $i = 0;
         $last = $default;
-        $sleeper = function() use ($millisecs) {
+        $sleeper = function () use ($millisecs) {
             if (!is_null($millisecs)) {
                 msleep($millisecs);
             }
@@ -212,9 +205,9 @@ if (!function_exists('do_until')) {
                 break;
             }
             $sleeper();
-        } while (is_callable($condition) ? $condition($last, $i++) : $condition);
+        } while (value_of($condition, $last, $i++));
 
-            return $last;
+        return $last;
 
         //    while (true) {
         //        try {
@@ -226,8 +219,8 @@ if (!function_exists('do_until')) {
         //            }
         //            $action($i, $last);
         //        } catch (ContinueException $continue) {
-                      // @todo figure out how to make the getLevel() method work here... would be neat,
-                      //       but not worth wasting time right now...
+        // @todo figure out how to make the getLevel() method work here... would be neat,
+        //       but not worth wasting time right now...
         //            continue;
         //        } catch (BreakException $break) {
         //            break;
@@ -286,8 +279,8 @@ if (!function_exists('retry')) {
      * @param callable $func The callable to retry
      * @param int $retries The maximum amount of total tries before it steps retrying
      * @param int|null $millisecs Time to wait between tries (in thousandths of a second)
-     * @todo finish this later it's boring the shit out of me
      * @return bool
+     * @todo finish this later it's boring the shit out of me
      */
     function retry(callable $func, $retries = 3, ?int $millisecs = null)
     {
@@ -326,7 +319,7 @@ if (!function_exists('chain')) {
     function chain(iterable $chain, $value, ...$args)
     {
         foreach ($chain as $link) {
-            $value = $link($value, ...$args);
+            $value = value_of($link, $value, ...$args);
         }
         return $value;
     }
@@ -345,7 +338,7 @@ if (!function_exists('callchain')) {
     {
         return function ($value, ...$args) use ($chain) {
             foreach ($chain as $link) {
-                $value = $link($value, ...$args);
+                $value = value_of($link, $value, ...$args);
             }
             return $value;
         };
@@ -359,7 +352,7 @@ if (!function_exists('combine')) {
     {
         return function ($value, ...$args) use ($callables) {
             foreach ($callables as $link) {
-                $link($value, ...$args);
+                value_of($link, $value, ...$args);
             }
         };
     }
@@ -371,7 +364,7 @@ if (!function_exists('invoke_all')) {
     function invoke_all(iterable $callables, $value, ...$args): void
     {
         $func = combine($callables);
-        $func($value, ...$args);
+        value_of($func, $value, ...$args);
     }
 
 }
@@ -391,7 +384,29 @@ if (!function_exists('edump')) {
     function edump($value, $envs)
     {
         do_ifenv(
-            function() use ($value) { dump($value); },
+            function () use ($value) {
+                dump($value);
+            },
+            $envs
+        );
+    }
+
+}
+
+if (!function_exists('sampleof')) {
+
+    /**
+     * Somewhat similar to var_dump or print_r, but the output is truncated it too long
+     *
+     * @param mixed $value The value to dump
+     * @param array|string $envs One or more envs to dump for
+     */
+    function sampleof($value, $envs)
+    {
+        do_ifenv(
+            function () use ($value) {
+                dump($value);
+            },
             $envs
         );
     }
@@ -447,8 +462,8 @@ if (!function_exists('recover')) {
      * @param callable $func
      * @param callable|mixed|null $default
      * @param callable|null $handler
-     * @throws \Throwable
      * @return mixed|null
+     * @throws \Throwable
      */
     function recover($func, $default = null, $handler = null)
     {
@@ -497,7 +512,7 @@ if (!function_exists('suppress')) {
 }
 
 /**
- * //--[ Arrays, Data Structures & Dot Notation ]--//
+ * //--[ Arrays, Container Structures & Dot Notation ]--//
  */
 
 if (!function_exists('collect')) {
@@ -508,9 +523,9 @@ if (!function_exists('collect')) {
      * @param array|mixed $items Items to convert to a factory
      * @return Collection
      */
-    function collect($items = null): Collection
+    function collect($items = null): CollectionInterface
     {
-        return Collection::factory($items);
+        return Collection::create($items);
     }
 
 }
@@ -530,7 +545,7 @@ if (!function_exists('to_array')) {
      */
     function to_array($items, $force = false): array
     {
-        return \Mainframe\Utils\Helper\Data::toArray($items, $force);
+        return Data::toArray($items, $force);
     }
 
 }
@@ -567,6 +582,8 @@ if (!function_exists('typeof')) {
             if ($class = get_class($value)) {
                 $type = $class;
             }
+        } elseif ($type == 'resource') {
+            $type = get_resource_type($value) . ' ' . $type;
         }
         if (!$typeOnly) {
             if ($type == 'array' || $value instanceof ArrayObject) {
@@ -587,8 +604,209 @@ if (!function_exists('typeof')) {
                     $type = sprintf('%s(%d)', $type, count($value));
                 }
             }
+            if ($type == 'string') {
+                $type = sprintf('%s(%d)', $type, mb_strlen($value));
+            }
         }
         return $type;
+    }
+
+}
+
+if (!function_exists('valinfo')) {
+
+    /**
+     * Produces a useful representation of any value for use in exceptions or anywhere you need a
+     * quick and dirty string rep of type, value, and potentially some other minor details like count
+     *
+     * @param mixed $value The value to get info for
+     */
+    function valinfo($value): string
+    {
+        $info = typeof($value);
+
+        if (is_bool($value)) {
+            $info = $value ? '<true>' : '<false>';
+        } elseif (is_scalar($value)) {
+            $val = (string)$value;
+
+            if (strlen($val) > 100) {
+                $val = substr($val, 0, 97) . '...';
+            }
+
+            $info = $val;
+        } elseif (null === $value) {
+            $info = '<null>';
+        }
+
+        return $info;
+    }
+
+}
+
+if (!function_exists('absolute_offset_length')) {
+
+    /**
+     * Given an array or countable, an offset (can be negative or null), and a length (also can be negative
+     * or null), and returns a two-item array containing the absolute offset and length.
+     *
+     * @param $items
+     * @param int $offset
+     * @param int|null $length
+     * @return [int, int]
+     */
+    function absolute_offset_length($items, int $offset = null, ?int $length = null): array
+    {
+        $count = Data::count($items);
+
+        if (is_null($offset)) {
+            $startoffset = 0;
+        }
+        if ($offset < 0) {
+            $startoffset = $count - abs($offset);
+        }
+        if ($offset > $count) {
+            return [0, 0];
+        }
+        if (is_null($length)) {
+            $endoffset = $count;
+        }
+        if ($length < 0) {
+            $endoffset = $count - abs($length);
+            if ($endoffset < 0) {
+                $endoffset = 0;
+            }
+        }
+
+        if (!isset($startoffset)) {
+            $startoffset = ($offset < 0) ? 0 : $offset;
+        }
+
+        if (!isset($endoffset)) {
+            $endoffset = $startoffset + $length;
+        }
+
+        if ($startoffset < 0) {
+            $startoffset = 0;
+        }
+        if ($endoffset > $count) {
+            $endoffset = $count;
+        }
+
+        if ($startoffset > $endoffset) {
+            return [0, 0];
+        }
+
+        return [$startoffset, $endoffset];
+    }
+
+}
+
+if (!function_exists('absolute_offset')) {
+
+    /**
+     * Given an array or countable and an offset, return the absolute offset
+     *
+     * @param $items
+     * @param int $offset
+     * @param int|null $length
+     * @return int
+     */
+    function absolute_offset($items, int $offset = null): int
+    {
+        $count = Data::count($items);
+        if ($offset < 0) {
+            $offset = $count + $offset;
+        }
+        return $offset;
+    }
+
+}
+
+/**
+ * //--[ Streams ]--//
+ */
+
+if (!function_exists('lazy_fopen')) {
+
+    function lazy_fopen($filename, $mode, $use_include_path = false, $context = null)
+    {
+        return new LazyStream(...func_get_args());
+    }
+
+}
+
+if (!function_exists('safe_fopen')) {
+    /**
+     * Safely opens a PHP stream resource using a filename.
+     *
+     * When fopen fails, PHP normally raises a warning. This function adds an
+     * error handler that checks for errors and throws an exception instead.
+     *
+     * @param string $filename File to open
+     * @param string $mode Mode used to open the file
+     *
+     * @return resource
+     * @throws \RuntimeException if the file cannot be opened
+     */
+    function safe_fopen($filename, $mode, $use_include_path = false, $context = null)
+    {
+        $ex = null;
+        set_error_handler(function () use ($filename, $mode, &$ex) {
+            $ex = RuntimeException::create(
+                'Unable to open %s using mode %s: %s',
+                [$filename, $mode, func_get_args()[1]]
+            );
+        });
+
+        $handle = fopen($filename, $mode, $use_include_path, $context);
+        restore_error_handler();
+
+        if ($ex) {
+            /** @var $ex RuntimeException */
+            throw $ex;
+        }
+
+        return $handle;
+    }
+}
+
+/**
+ * //--[ Bitwise Operations ]--//
+ */
+
+if (!function_exists('flag_set')) {
+
+    function flag_set(int &$flag, int $option): int
+    {
+        return ($flag |= $option);
+    }
+
+}
+
+if (!function_exists('flag_unset')) {
+
+    function flag_unset(int &$flag, int $option): int
+    {
+        return ($flag &= ~$option);
+    }
+
+}
+
+if (!function_exists('flag_toggle')) {
+
+    function flag_toggle(int &$flag, int $option): int
+    {
+        return ($flag ^= $option);
+    }
+
+}
+
+if (!function_exists('flag_assert')) {
+
+    function flag_assert(int $flag, int $option): bool
+    {
+        return ($flag & $option) > 0;
     }
 
 }

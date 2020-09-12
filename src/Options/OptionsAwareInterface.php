@@ -8,6 +8,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Options;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,6 +16,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 interface OptionsAwareInterface
 {
     public function setOptions(array $options = []);
+
     public function getOptions(): array;
+
     public function getOption($name);
 }

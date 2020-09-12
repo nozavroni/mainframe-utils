@@ -8,6 +8,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Support\Action;
 
 abstract class AbstractAction
@@ -15,7 +16,6 @@ abstract class AbstractAction
     /**
      * Invoke the action
      *
-     * @param mixed $args,... Allow unlimited args
      * @return mixed
      */
     public function __invoke(...$args)
@@ -24,10 +24,7 @@ abstract class AbstractAction
     }
 
     /**
-     * Perform the action
-     *
-     * @param mixed $args,... Allow unlimited args
-     * @return mixed
+     * \     * @return mixed
      */
     abstract protected function perform(...$args);
 

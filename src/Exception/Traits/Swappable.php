@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Exception\Traits;
 
 use Mainframe\Utils\Exception\TypeError;
@@ -29,15 +30,16 @@ trait Swappable
         ?string $type = null,
         ?string $message = null,
         ?int $code = null
-    ) {
+    )
+    {
         $class = static::class;
         TypeError::raiseUnless(
             is_subclass_of($class, Throwable::class),
             '"%s" is not a valid throwable', [$class]
         );
-        return recover (
-            fn () => value_of($func).
-            null,
+        return recover(
+            fn() => value_of($func) .
+                null,
             function (Throwable $throwable) use ($class, $type, $message, $code) {
                 // kind of a hack...using the handler argument (which is supposed to be passive)
                 // to throw the desired exception

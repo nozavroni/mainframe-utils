@@ -7,18 +7,41 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Exception\Traits;
 
 use DateTime;
+use Mainframe\Utils\Exception\LogicException;
 use Mainframe\Utils\Exception\RaisableInterface;
+use Mainframe\Utils\Helper\Data;
 use Mainframe\Utils\Helper\Str;
 use Throwable;
+use function Mainframe\Utils\str;
 
 const DATE = 'Y-m-d';
 const TIME = 'g:i:sa';
 
 trait Raisable
 {
+    /** @var string Repl format */
+    protected static $replFormat = '{%%%s}';
+
+    /**
+     * @return array
+     */
+    public static function getRequiredArgs(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDefaultMessage(): string
+    {
+        return 'An error occurred: {%msg}';
+    }
+
     /**
      * Essentially this is just a different way to throw an exception where no message is required, in fact
      * no arguments at all are. And the exception message works as sprintf() does. This just makes it cleaner
@@ -43,43 +66,50 @@ trait Raisable
         throw static::create($str, $args, $throwable);
     }
 
-    public static function raiseIf($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null)
+    public static function raiseIf($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null): void
     {
         if (value_of($condition)) {
             static::raise($str, $args, $throwable);
         }
     }
 
-    public static function raiseUnless($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null)
+    public static function raiseUnless($condition, ?string $str = null, array $args = [], ?Throwable $throwable = null): void
     {
         if (!value_of($condition)) {
             static::raise($str, $args, $throwable);
         }
     }
 
-    // @todo I had wanted to do this so that isRaised would always be right, but I suppose it still will be
-    //      as raised is somewhat different than thrown
-//    private function __construct($message = null, $code = 0, Throwable $throwable = null)
-//    {
-//        parent::__construct((string) $message, $code, $throwable);
-//    }
-
-    public static function create(?string $str = null, array $args = [], ?Throwable $throwable = null): RaisableInterface
+    public static function create(?string $str = null, array $args = [], ?Throwable $throwable = null): self
     {
+        $str ??= static::getDefaultMessage();
+        $required = static::getRequiredArgs();
         $dt = new DateTime;
+        $classname = str(self::class)->afterLast('\\');
         $predefined = [
-            'type' => parent::class,
+            'type' => self::class,
             'date' => $dt->format(DATE),
             'time' => $dt->format(TIME),
+            'microtime' => microtime(true),
             'datetime' => $dt->format(DATE . ' ' . TIME),
             'timestamp' => $dt->getTimestamp(),
-            'previous' => is_object($throwable) ? get_class($throwable) : 'unknown',
+            'timezone' => date_default_timezone_get(),
+            'class' => get_called_class(),
+            'user' => get_current_user(),
+            'parent' => get_parent_class(),
+            'msg' => 'Unknown problem - ' . $classname
         ];
+
+        $args = $args + $predefined;
+        if (!empty($required) && !Data::containsAll(Data::keys($args), $required)) {
+            throw new LogicException('Missing some required args for raisable exception');
+        }
 
         return new static (
             vsprintf(
-                Str::template($str, $args + $predefined, '{%%%s}'),
-                array_filter($args, fn ($key) => is_int($key), ARRAY_FILTER_USE_KEY)
+                Str::template($str, $args, static::$replFormat),
+                $args,
+            // array_filter($args, fn ($key) => is_int($key), ARRAY_FILTER_USE_KEY)
             ),
             0,
             $throwable
