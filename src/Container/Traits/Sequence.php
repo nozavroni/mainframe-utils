@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Container\Traits;
 
 use Mainframe\Utils\Container\Index;
@@ -64,8 +65,8 @@ trait Sequence
     public function indexesOf($value, $strict = false): Index
     {
         $cmp = $strict ?
-            fn ($a, $b) => $a === $b :
-            fn ($a, $b) => $a == $b;
+            fn($a, $b) => $a === $b :
+            fn($a, $b) => $a == $b;
 
         $indexes = new Index;
         foreach (Data::toIndex($this) as $i => $val) {
@@ -85,8 +86,8 @@ trait Sequence
     public function keysOf($value, $strict = false): Index
     {
         $cmp = $strict ?
-            fn ($a, $b) => $a === $b :
-            fn ($a, $b) => $a == $b;
+            fn($a, $b) => $a === $b :
+            fn($a, $b) => $a == $b;
 
         $keys = new Index();
         foreach (Data::toArray($this) as $key => $val) {

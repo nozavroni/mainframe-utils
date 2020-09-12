@@ -8,6 +8,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Support\Action;
 
 use Mainframe\Utils\Options\OptionsAware;
@@ -33,8 +34,8 @@ class BuildContainerAction extends AbstractAction implements OptionsAwareInterfa
     }
 
     /**
-     * @todo Need to actually implement the config caching
      * @param OptionsResolver $resolver
+     * @todo Need to actually implement the config caching
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -58,7 +59,7 @@ class BuildContainerAction extends AbstractAction implements OptionsAwareInterfa
         return $processor->processConfiguration(
             $this->configDefinition,
             array_map(
-                function($filepath) {
+                function ($filepath) {
                     if (!file_exists($filepath)) {
                         throw new ResourceNotFoundException(sprintf('Could not find "%s"', $filepath));
                     }
@@ -80,9 +81,9 @@ class BuildContainerAction extends AbstractAction implements OptionsAwareInterfa
             throw new BootException('No container configuration defined');
         }
         $config = collect($this->processConfig(to_array($containerConfigs)))
-            ->map(function($val, $key, $iter) {
+            ->map(function ($val, $key, $iter) {
                 $opts = $this->getOptions();
-                $templater = function($str) use ($opts) {
+                $templater = function ($str) use ($opts) {
                     return str_template($str, $opts, '%%%s%%');
                 };
                 if (is_array($val)) {
@@ -104,7 +105,7 @@ class BuildContainerAction extends AbstractAction implements OptionsAwareInterfa
                     return $class;
                 })
                 ->flip()
-                ->map(fn ($val, $class, $iter) => autowire())
+                ->map(fn($val, $class, $iter) => autowire())
                 ->toArray();
             $this->builder->useAutowiring($autoWiring);
             $this->builder->addDefinitions($autowiredClasses);

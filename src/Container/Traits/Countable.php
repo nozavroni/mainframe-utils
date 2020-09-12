@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Container\Traits;
 
 use Mainframe\Utils\Exception\BadMethodCallException;
@@ -28,7 +29,7 @@ trait Countable
         if ($this->storage instanceof \Countable) {
             return count($this->storage);
         }
-        $alts = ['size','getsize','count','length'];
+        $alts = ['size', 'getsize', 'count', 'length'];
         foreach ($alts as $alt) {
             if (method_exists($this->storage, $alt)) {
                 return $this->storage->$alt();

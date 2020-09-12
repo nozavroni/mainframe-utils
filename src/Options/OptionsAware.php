@@ -8,14 +8,15 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Options;
 
 use Mainframe\Utils\Helper\Data;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 trait OptionsAware
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    /** @var array The options array */
+{
+    /** @var array The options array */
     protected array $options = [];
 
     /**

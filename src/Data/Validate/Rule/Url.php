@@ -7,11 +7,13 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Validate\Rule;
 
-use Mainframe\Utils\Data\Value;use Mainframe\Utils\Options\OptionsAware;
+use Mainframe\Utils\Data\Value;
+use Mainframe\Utils\Options\OptionsAware;
 use Mainframe\Utils\Options\OptionsAwareInterface;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\StreamInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Url extends Rule implements OptionsAwareInterface
@@ -51,6 +53,6 @@ class Url extends Rule implements OptionsAwareInterface
         if ($this->getOption('require_query')) {
             flag_set($flags, FILTER_FLAG_QUERY_REQUIRED);
         }
-        return (bool) filter_var($value(), FILTER_VALIDATE_URL, $flags);
+        return (bool)filter_var($value(), FILTER_VALIDATE_URL, $flags);
     }
 }

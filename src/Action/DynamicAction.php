@@ -8,6 +8,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Support\Action;
 
 use Closure;
@@ -43,7 +44,7 @@ class DynamicAction extends AbstractAction
     public function setAction($action = null)
     {
         if (!is_callable($action)) {
-            $action = fn (...$a) => $action;
+            $action = fn(...$a) => $action;
         }
         $this->action = Closure::fromCallable($action);
         return $this;

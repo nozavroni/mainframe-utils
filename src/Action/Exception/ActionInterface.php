@@ -8,6 +8,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Action\Exception;
 
 // @todo Transition from ActionException to ActionInterface and do a catch (MainframeException $e)

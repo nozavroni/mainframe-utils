@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Normalize\Filter;
 
 use Mainframe\Utils\Data\Value;

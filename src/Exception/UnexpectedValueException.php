@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Exception;
 
 /**
@@ -20,8 +21,8 @@ namespace Mainframe\Utils\Exception;
  * is compile-time). So if you cannot know whether the value is expected unless in
  */
 class UnexpectedValueException
-extends \UnexpectedValueException
-implements RaisableInterface, RecoverableInterface, SuppressableInterface
+    extends \UnexpectedValueException
+    implements RaisableInterface, RecoverableInterface, SuppressableInterface
 {
     use Traits\Raisable,
         Traits\Swappable,

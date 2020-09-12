@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Container;
 
 use Mainframe\Utils\Container\Traits\Accessors;
@@ -36,6 +37,7 @@ interface AccessorsInterface
      * @return array
      */
     public function pairs(): array;
+
     /**
      * Get a value by key or dot-notation path
      *

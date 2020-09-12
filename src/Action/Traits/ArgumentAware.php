@@ -8,6 +8,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Support\Action\Traits;
 
 use Mainframe\Utils\Helper\Data;

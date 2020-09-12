@@ -66,5 +66,6 @@ class V
             return new $class(...$arguments);
         }
 
-        UnknownRuleException::raise('Unknown method: %s::%s', [__CLASS__, $name]);    }
+        UnknownRuleException::raise('Unknown method: %s::%s', [__CLASS__, $name]);
+    }
 }

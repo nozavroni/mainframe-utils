@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Helper;
 
 use ArgumentCountError;
@@ -49,7 +50,7 @@ class Data
         if (is_iterable($path)) {
             return Data::map(
                 Data::toArray($path),
-                fn ($k, $_, $i) => new Pair($k, static::get($items, $k, $default, $delim))
+                fn($k, $_, $i) => new Pair($k, static::get($items, $k, $default, $delim))
             );
         }
 
@@ -244,7 +245,7 @@ class Data
      */
     public static function strings($items)
     {
-        return Data::map($items, fn($v, $k, $i) => (string) $v);
+        return Data::map($items, fn($v, $k, $i) => (string)$v);
     }
 
     /**
@@ -399,8 +400,8 @@ class Data
     public static function indexOf($items, $value, $identical = false, $throwOnFailure = false): ?int
     {
         $indexOf = null;
-        $cmp = fn ($a, $b) => $identical ? $a === $b : $a == $b;
-        static::each($items, function($v, $k, $i) use (&$indexOf, $value, $cmp) {
+        $cmp = fn($a, $b) => $identical ? $a === $b : $a == $b;
+        static::each($items, function ($v, $k, $i) use (&$indexOf, $value, $cmp) {
             if ($cmp($v, $value)) {
                 $indexOf = $i;
                 return false;
@@ -413,8 +414,8 @@ class Data
     public static function indexOfLast($items, $value, $identical = false, $throwOnFailure = false): ?int
     {
         $indexOf = null;
-        $cmp = fn ($a, $b) => $identical ? $a === $b : $a == $b;
-        static::each($items, function($v, $k, $i) use (&$indexOf, $value, $cmp) {
+        $cmp = fn($a, $b) => $identical ? $a === $b : $a == $b;
+        static::each($items, function ($v, $k, $i) use (&$indexOf, $value, $cmp) {
             if ($cmp($v, $value)) {
                 $indexOf = $i;
             }
@@ -455,11 +456,11 @@ class Data
 //        }
 //        return false;
 
-        return (bool) static::reduce($items, function ($a, $v, $k, $i) use ($key, $value) {
+        return (bool)static::reduce($items, function ($a, $v, $k, $i) use ($key, $value) {
             if ($a === true) {
                 return true;
             }
-            $matchkey = fn ($m) => is_null($key) || $m === $key;
+            $matchkey = fn($m) => is_null($key) || $m === $key;
             if (is_callable($value)) {
                 if ($value($v, $k, $i)) {
                     return $matchkey($k);
@@ -483,7 +484,7 @@ class Data
      */
     public static function containsAll($items, iterable $values, bool $matchKey = false): bool
     {
-        return static::assert($values, fn ($v, $k, $i) => static::contains($items, $v, $matchKey ? $k : null));
+        return static::assert($values, fn($v, $k, $i) => static::contains($items, $v, $matchKey ? $k : null));
     }
 
     /**
@@ -496,7 +497,7 @@ class Data
      */
     public static function containsAny($items, iterable $values, bool $matchKey = false): bool
     {
-        return static::any($values, fn ($v, $k, $i) => static::contains($items, $v, $matchKey ? $k : null));
+        return static::any($values, fn($v, $k, $i) => static::contains($items, $v, $matchKey ? $k : null));
     }
 
     /**
@@ -762,7 +763,7 @@ class Data
      */
     public static function apply($items, $key, $func, $default = null)
     {
-        if(!is_iterable($func)) {
+        if (!is_iterable($func)) {
             $funcs = [$func];
         }
         $args = func_get_args();
@@ -948,7 +949,7 @@ class Data
     public static function slice($items, int $offset, ?int $length = null): array
     {
         [$start, $end] = absolute_offset_length(Data::count($items), $offset, $length);
-        return static::filter($items, function($v, $k, $o) use ($start, $end) {
+        return static::filter($items, function ($v, $k, $o) use ($start, $end) {
             return ($o >= $start && $o <= $end);
         });
 
@@ -964,7 +965,7 @@ class Data
     public static function splice($items, $input, int $offset, ?int $length = null): array
     {
         [$start, $end] = absolute_offset_length($items, $offset, $length);
-        $excluded = static::filter($items, function($v, $k, $o) use ($start, $end) {
+        $excluded = static::filter($items, function ($v, $k, $o) use ($start, $end) {
             return ($o < $start && $o > $end);
         });
         [$top, $bottom] = Data::cut($items, $offset);

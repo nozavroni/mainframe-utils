@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Exception\Traits;
 
 use DateTime;
@@ -105,10 +106,10 @@ trait Raisable
         }
 
         return new static (
-            vsprintf (
+            vsprintf(
                 Str::template($str, $args, static::$replFormat),
                 $args,
-                // array_filter($args, fn ($key) => is_int($key), ARRAY_FILTER_USE_KEY)
+            // array_filter($args, fn ($key) => is_int($key), ARRAY_FILTER_USE_KEY)
             ),
             0,
             $throwable

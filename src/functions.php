@@ -186,7 +186,7 @@ if (!function_exists('do_until')) {
     {
         $i = 0;
         $last = $default;
-        $sleeper = function() use ($millisecs) {
+        $sleeper = function () use ($millisecs) {
             if (!is_null($millisecs)) {
                 msleep($millisecs);
             }
@@ -207,7 +207,7 @@ if (!function_exists('do_until')) {
             $sleeper();
         } while (value_of($condition, $last, $i++));
 
-            return $last;
+        return $last;
 
         //    while (true) {
         //        try {
@@ -219,8 +219,8 @@ if (!function_exists('do_until')) {
         //            }
         //            $action($i, $last);
         //        } catch (ContinueException $continue) {
-                      // @todo figure out how to make the getLevel() method work here... would be neat,
-                      //       but not worth wasting time right now...
+        // @todo figure out how to make the getLevel() method work here... would be neat,
+        //       but not worth wasting time right now...
         //            continue;
         //        } catch (BreakException $break) {
         //            break;
@@ -279,8 +279,8 @@ if (!function_exists('retry')) {
      * @param callable $func The callable to retry
      * @param int $retries The maximum amount of total tries before it steps retrying
      * @param int|null $millisecs Time to wait between tries (in thousandths of a second)
-     * @todo finish this later it's boring the shit out of me
      * @return bool
+     * @todo finish this later it's boring the shit out of me
      */
     function retry(callable $func, $retries = 3, ?int $millisecs = null)
     {
@@ -384,7 +384,9 @@ if (!function_exists('edump')) {
     function edump($value, $envs)
     {
         do_ifenv(
-            function() use ($value) { dump($value); },
+            function () use ($value) {
+                dump($value);
+            },
             $envs
         );
     }
@@ -402,7 +404,9 @@ if (!function_exists('sampleof')) {
     function sampleof($value, $envs)
     {
         do_ifenv(
-            function() use ($value) { dump($value); },
+            function () use ($value) {
+                dump($value);
+            },
             $envs
         );
     }
@@ -458,8 +462,8 @@ if (!function_exists('recover')) {
      * @param callable $func
      * @param callable|mixed|null $default
      * @param callable|null $handler
-     * @throws \Throwable
      * @return mixed|null
+     * @throws \Throwable
      */
     function recover($func, $default = null, $handler = null)
     {
@@ -627,7 +631,7 @@ if (!function_exists('valinfo')) {
             $val = (string)$value;
 
             if (strlen($val) > 100) {
-                $val = substr($val, 0, 97).'...';
+                $val = substr($val, 0, 97) . '...';
             }
 
             $info = $val;
@@ -740,7 +744,7 @@ if (!function_exists('safe_fopen')) {
      * error handler that checks for errors and throws an exception instead.
      *
      * @param string $filename File to open
-     * @param string $mode     Mode used to open the file
+     * @param string $mode Mode used to open the file
      *
      * @return resource
      * @throws \RuntimeException if the file cannot be opened

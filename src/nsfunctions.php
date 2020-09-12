@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils;
 
 use Mainframe\Utils\Helper\Data;
@@ -25,7 +26,7 @@ function str($val): MString
 
 function strs(iterable $vals)
 {
-    return Data::map($vals, fn ($v, $k, $i) => (string) $v);
+    return Data::map($vals, fn($v, $k, $i) => (string)$v);
 }
 
 function str_join(iterable $vals, $delim = '')

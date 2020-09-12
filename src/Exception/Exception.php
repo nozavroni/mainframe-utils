@@ -7,15 +7,15 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Exception;
 
 /**
  * The most generic possible exception type
  */
-
 class Exception
-extends \Exception
-implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
+    extends \Exception
+    implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
         Traits\Swappable,

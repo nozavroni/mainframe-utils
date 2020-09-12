@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Validate\Rule;
 
 use Mainframe\Utils\Data\Value;
@@ -27,6 +28,6 @@ class IsFloat extends Rule
     public function validate(Value $value): bool
     {
         $flags = $this->allowThousandSep ? FILTER_FLAG_ALLOW_THOUSAND : null;
-        return (bool) filter_var($value(), FILTER_VALIDATE_FLOAT, $flags);
+        return (bool)filter_var($value(), FILTER_VALIDATE_FLOAT, $flags);
     }
 }

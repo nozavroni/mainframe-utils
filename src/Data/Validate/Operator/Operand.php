@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Validate\Operator;
 
 use Closure;
@@ -66,6 +67,6 @@ class Operand
         while (is_callable($c)) {
             $c = value_of($c, $value);
         }
-        return (bool) $c;
+        return (bool)$c;
     }
 }

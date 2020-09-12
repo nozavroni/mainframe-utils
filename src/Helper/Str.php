@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Helper;
 
 use Mainframe\Utils\Strings\MString;
@@ -27,9 +28,9 @@ class Str
      */
     public static function template($template, array $context, string $repl_format = '%s')
     {
-        $context = array_map(fn ($val) => valinfo($val), $context);
+        $context = array_map(fn($val) => valinfo($val), $context);
         if (is_array($template)) {
-            return array_map(function($str) use ($context, $repl_format) {
+            return array_map(function ($str) use ($context, $repl_format) {
                 return static::template($str, $context, $repl_format);
             }, $template);
         }
@@ -57,15 +58,15 @@ class Str
      */
     public static function preg_template($template, array $context, string $preg_format = '/{%(\w+)(?::(\w+))?}/')
     {
-        $context = array_filter($context, fn ($val) => is_string($val));
+        $context = array_filter($context, fn($val) => is_string($val));
         if (is_array($template)) {
-            return array_map(function($str) use ($context, $preg_format) {
+            return array_map(function ($str) use ($context, $preg_format) {
                 return preg_template($str, $context, $preg_format);
             }, $template);
         }
         return preg_replace_callback(
             $preg_format,
-            function($matches) use ($context) {
+            function ($matches) use ($context) {
                 $name = $matches[1];
                 return $context[$name] ?? $matches[2] ?? '';
             },
@@ -151,7 +152,7 @@ class Str
             u($val)->normalize()->lower()->split('/\W+/', null, PREG_SPLIT_NO_EMPTY)
         );
         if (!is_null($maxlen)) {
-            return (string) u($slug)->slice(0, $maxlen);
+            return (string)u($slug)->slice(0, $maxlen);
         }
         return $slug;
     }

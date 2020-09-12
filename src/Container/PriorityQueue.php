@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Container;
 
 use Countable;
@@ -16,12 +17,12 @@ use SplQueue;
 
 class PriorityQueue implements Countable, Iterator
 {
-    const PRIORITY_LOWEST  =    0;
-    const PRIORITY_LOWER   =   10;
-    const PRIORITY_LOW     =   50;
-    const PRIORITY_NORMAL  =  100;
-    const PRIORITY_HIGH    =  500;
-    const PRIORITY_HIGHER  = 1000;
+    const PRIORITY_LOWEST = 0;
+    const PRIORITY_LOWER = 10;
+    const PRIORITY_LOW = 50;
+    const PRIORITY_NORMAL = 100;
+    const PRIORITY_HIGH = 500;
+    const PRIORITY_HIGHER = 1000;
     const PRIORITY_HIGHEST = 5000;
 
     protected array $priorities;

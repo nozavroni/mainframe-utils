@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Strings\Regex;
 
 use Composer\Downloader\PathDownloader;
@@ -20,10 +21,10 @@ class Pattern
     const REPR_FORMAT = '{%%%s}';
     const MOD_CHARS = 'imsxeADSUXJu';
     const DEL_CHARS = [
-        '{}','[]','()','<>',
-        '/','!','"','#','$','%','&','\'',
-        '*','+',',','.','/',':',';','=',
-        '?','@','^','_','`','|','~','-'
+        '{}', '[]', '()', '<>',
+        '/', '!', '"', '#', '$', '%', '&', '\'',
+        '*', '+', ',', '.', '/', ':', ';', '=',
+        '?', '@', '^', '_', '`', '|', '~', '-'
     ];
 
     const ANCHORED_LEFT = 1;
@@ -53,32 +54,32 @@ class Pattern
      * Pattern constructor.
      * @param string $pattern
      */
-/*    public function __construct(string $pattern)
-    {
-        $p = str($pattern);
-        $s = $p->truncate(1)->toString();
-        $p = $p->slice(1);
-        InvalidArgumentException::raiseUnless(
-            Data::contains(Data::map(static::DEL_CHARS, fn($v) => $v[0]), $s),
-            'Invalid delimiter in provided regex pattern: %s',
-            [$s]
-        );
-        $d = Data::first(static::DEL_CHARS, function ($v, $k, $i) use ($s) {
-            if (str($v)->truncate(1)->toString() === $s) {
-                return true;
-            }
-        });
-//        dd(get_defined_vars());
-        $e = str($d)->reverse()->truncate(1)->toString();
-        InvalidArgumentException::raiseIf(
-            $p->indexOfLast($e) === null,
-            'Missing end delimiter: %s',
-            [$e]
-        );
-        $this->pattern = (string)$p->beforeLast($e);
-        $this->delims = (string)$d;
-        $this->modifiers = (string)$p->afterLast($e)->intersect(static::MOD_CHARS);
-    }*/
+    /*    public function __construct(string $pattern)
+        {
+            $p = str($pattern);
+            $s = $p->truncate(1)->toString();
+            $p = $p->slice(1);
+            InvalidArgumentException::raiseUnless(
+                Data::contains(Data::map(static::DEL_CHARS, fn($v) => $v[0]), $s),
+                'Invalid delimiter in provided regex pattern: %s',
+                [$s]
+            );
+            $d = Data::first(static::DEL_CHARS, function ($v, $k, $i) use ($s) {
+                if (str($v)->truncate(1)->toString() === $s) {
+                    return true;
+                }
+            });
+    //        dd(get_defined_vars());
+            $e = str($d)->reverse()->truncate(1)->toString();
+            InvalidArgumentException::raiseIf(
+                $p->indexOfLast($e) === null,
+                'Missing end delimiter: %s',
+                [$e]
+            );
+            $this->pattern = (string)$p->beforeLast($e);
+            $this->delims = (string)$d;
+            $this->modifiers = (string)$p->afterLast($e)->intersect(static::MOD_CHARS);
+        }*/
 
     /**
      * @param string $defaultDelim One or two chars to use as delim(s) (either something like / or like <>)

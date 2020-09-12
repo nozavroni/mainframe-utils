@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Normalize;
 
 use Mainframe\Utils\Container\PriorityQueue;
@@ -32,7 +33,7 @@ class Chain
     public function __call($name, $arguments)
     {
         $priority = array_pop($arguments) ?? Queue::PRIORITY_NORMAL;
-        $this->chain->insert(N::filter($name, $arguments), (int) $priority);
+        $this->chain->insert(N::filter($name, $arguments), (int)$priority);
         return $this;
     }
 

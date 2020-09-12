@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Validate\Rule;
 
 use Mainframe\Utils\Data\Value;
@@ -15,6 +16,6 @@ class Is extends Rule
 {
     public function validate(Value $value): bool
     {
-        return (bool) $value();
+        return (bool)$value();
     }
 }

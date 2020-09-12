@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Validate\Rule;
 
 use Mainframe\Utils\Data\Value;
@@ -35,7 +36,7 @@ class Matches extends Rule
      */
     public function validate(Value $value): bool
     {
-        return (bool) preg_match("/^{$this->pattern}$/", $value());
+        return (bool)preg_match("/^{$this->pattern}$/", $value());
     }
 
     /**

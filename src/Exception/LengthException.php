@@ -7,15 +7,15 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Exception;
 
 /**
  * Exception thrown if a length is invalid.
  */
-
 class LengthException
-extends \LengthException
-implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
+    extends \LengthException
+    implements RaisableInterface, RecoverableInterface, SuppressableInterface, SwappableInterface
 {
     use Traits\Raisable,
         Traits\Swappable,

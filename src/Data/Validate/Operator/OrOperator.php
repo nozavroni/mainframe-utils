@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Validate\Operator;
 
 use Mainframe\Utils\Data\Validate\RuleSetInterface;
@@ -23,6 +24,6 @@ class OrOperator extends Operator
 {
     protected function operate(Value $value): bool
     {
-        return Data::any($this->operands, fn ($o) => value_of($o, $value));
+        return Data::any($this->operands, fn($o) => value_of($o, $value));
     }
 }

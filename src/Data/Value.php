@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data;
 
 use Closure;
@@ -85,6 +86,6 @@ class Value
      */
     public function __toString()
     {
-        return (string) value_of($this->getValue());
+        return (string)value_of($this->getValue());
     }
 }

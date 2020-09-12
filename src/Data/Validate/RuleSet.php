@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Validate;
 
 use Mainframe\Utils\Data\Validate\Exception\AssertionFailedException;
@@ -66,7 +67,7 @@ class RuleSet implements RuleSetInterface
      */
     public function isValid($value): bool
     {
-        return AssertionFailedException::recover (
+        return AssertionFailedException::recover(
             function () use ($value) {
                 $this->__invoke($value);
                 return true;

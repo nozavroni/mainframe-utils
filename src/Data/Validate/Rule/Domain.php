@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Validate\Rule;
 
 use Mainframe\Utils\Data\Value;
@@ -34,6 +35,6 @@ class Domain extends Rule
         if ($this->isHostname) {
             flag_set($flags, FILTER_FLAG_HOSTNAME);
         }
-        return (bool) filter_var($value(), FILTER_VALIDATE_DOMAIN, $flags);
+        return (bool)filter_var($value(), FILTER_VALIDATE_DOMAIN, $flags);
     }
 }

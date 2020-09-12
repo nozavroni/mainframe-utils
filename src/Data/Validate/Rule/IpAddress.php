@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Validate\Rule;
 
 use Mainframe\Utils\Data\Value;
@@ -46,6 +47,6 @@ class IpAddress extends Rule
         if (!$this->options['allowResRange']) {
             flag_set($flags, FILTER_FLAG_NO_RES_RANGE);
         }
-        return (bool) filter_var($value(), FILTER_VALIDATE_IP, $flags);
+        return (bool)filter_var($value(), FILTER_VALIDATE_IP, $flags);
     }
 }

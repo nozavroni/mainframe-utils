@@ -1,12 +1,13 @@
 <?php
 /**
-* Mainframe - Utilities
-*
-* A set of functions and classes used by all of the various Mainframe components and repositories.
-*
-* @author Luke Visinoni <luke.visinoni@gmail.com>
-* @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
-*/
+ * Mainframe - Utilities
+ *
+ * A set of functions and classes used by all of the various Mainframe components and repositories.
+ *
+ * @author Luke Visinoni <luke.visinoni@gmail.com>
+ * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
+ */
+
 namespace Mainframe\Utils\Streams;
 
 use GuzzleHttp\Psr7\LazyOpenStream;
@@ -38,7 +39,7 @@ class LazyStream implements StreamInterface
 
     /**
      * @param string $filename File to lazily open
-     * @param string $mode     fopen mode to use when opening the stream
+     * @param string $mode fopen mode to use when opening the stream
      * @param bool $useIncludePath Whether to allow use of include path
      * @param array|null       context options (if any)
      */

@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Container\Traits;
 
 use Mainframe\Utils\Helper\Data;
@@ -54,6 +55,7 @@ trait Accessors
     {
         // TODO: Implement pairs() method.
     }
+
     /**
      * Get a value by key or dot-notation path
      *

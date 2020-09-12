@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Validate\Rule;
 
 use Mainframe\Utils\Data\Validate\Exception\RuleException;
@@ -23,7 +24,7 @@ class IsInstanceOf extends Rule
         if (!is_array($class)) {
             $class = [$class];
         }
-        $this->classes = Data::map (
+        $this->classes = Data::map(
             $class,
             function ($class, $k, $i) {
                 if (!is_string($class)) {
@@ -38,7 +39,7 @@ class IsInstanceOf extends Rule
 
     public function validate(Value $value): bool
     {
-        return Data::any($this->classes, fn ($class, $k, $i) => $value() instanceof $class);
+        return Data::any($this->classes, fn($class, $k, $i) => $value() instanceof $class);
     }
 
     /**

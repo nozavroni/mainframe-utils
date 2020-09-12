@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Data\Validate\Operator;
 
 use Closure;
@@ -76,7 +77,7 @@ abstract class Operator implements OperatorInterface
     public function __call($name, $arguments): bool
     {
         if (Data::has($this->operands, $name)) {
-            return (bool) value_of(Data::get($this->operands, $name), ...$arguments);
+            return (bool)value_of(Data::get($this->operands, $name), ...$arguments);
         }
 
         BadMethodCallException::raise('Unknown method: %s::%s', [__CLASS__, $name]);

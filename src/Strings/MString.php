@@ -7,6 +7,7 @@
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright (c) 2020 Luke Visinoni <luke.visinoni@gmail.com>
  */
+
 namespace Mainframe\Utils\Strings;
 
 use ArrayAccess;
@@ -100,7 +101,7 @@ class MString extends UnicodeString implements ArrayAccess, Countable, IteratorA
      */
     public function toArray(): array
     {
-        return Data::map($this->chunk(), fn ($v, $k, $i) => (string) $v);
+        return Data::map($this->chunk(), fn($v, $k, $i) => (string)$v);
     }
 
     /**

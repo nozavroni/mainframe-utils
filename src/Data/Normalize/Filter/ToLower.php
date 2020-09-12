@@ -19,6 +19,6 @@ class ToUpper implements FilterInterface
      */
     public function apply($value)
     {
-        return (string) str($value)->upper();
-     }
+        return (string)str($value)->upper();
+    }
 }
