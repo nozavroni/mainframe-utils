@@ -11,8 +11,8 @@
 
 use Mainframe\Action\Exception\BreakException;
 use Mainframe\Action\Exception\FailedAttemptException;
-use Mainframe\Utils\Data\Collection;
-use Mainframe\Utils\Data\CollectionInterface;
+use Mainframe\Utils\Container\Collection;
+use Mainframe\Utils\Container\CollectionInterface;
 use Mainframe\Utils\Helper\Data;
 use Mainframe\Utils\Streams\LazyStream;
 use Mainframe\Utils\Exception\RuntimeException;
@@ -391,6 +391,24 @@ if (!function_exists('edump')) {
 
 }
 
+if (!function_exists('sampleof')) {
+
+    /**
+     * Somewhat similar to var_dump or print_r, but the output is truncated it too long
+     *
+     * @param mixed $value The value to dump
+     * @param array|string $envs One or more envs to dump for
+     */
+    function sampleof($value, $envs)
+    {
+        do_ifenv(
+            function() use ($value) { dump($value); },
+            $envs
+        );
+    }
+
+}
+
 /**
  * //--[ Exceptions & Error Handling ]--//
  */
@@ -490,7 +508,7 @@ if (!function_exists('suppress')) {
 }
 
 /**
- * //--[ Arrays, Data Structures & Dot Notation ]--//
+ * //--[ Arrays, Container Structures & Dot Notation ]--//
  */
 
 if (!function_exists('collect')) {
@@ -560,6 +578,8 @@ if (!function_exists('typeof')) {
             if ($class = get_class($value)) {
                 $type = $class;
             }
+        } elseif ($type == 'resource') {
+            $type = get_resource_type($value) . ' ' . $type;
         }
         if (!$typeOnly) {
             if ($type == 'array' || $value instanceof ArrayObject) {
@@ -580,8 +600,42 @@ if (!function_exists('typeof')) {
                     $type = sprintf('%s(%d)', $type, count($value));
                 }
             }
+            if ($type == 'string') {
+                $type = sprintf('%s(%d)', $type, mb_strlen($value));
+            }
         }
         return $type;
+    }
+
+}
+
+if (!function_exists('valinfo')) {
+
+    /**
+     * Produces a useful representation of any value for use in exceptions or anywhere you need a
+     * quick and dirty string rep of type, value, and potentially some other minor details like count
+     *
+     * @param mixed $value The value to get info for
+     */
+    function valinfo($value): string
+    {
+        $info = typeof($value);
+
+        if (is_bool($value)) {
+            $info = $value ? '<true>' : '<false>';
+        } elseif (is_scalar($value)) {
+            $val = (string)$value;
+
+            if (strlen($val) > 100) {
+                $val = substr($val, 0, 97).'...';
+            }
+
+            $info = $val;
+        } elseif (null === $value) {
+            $info = '<null>';
+        }
+
+        return $info;
     }
 
 }
@@ -595,8 +649,9 @@ if (!function_exists('absolute_offset_length')) {
      * @param $items
      * @param int $offset
      * @param int|null $length
+     * @return [int, int]
      */
-    function absolute_offset_length($items, int $offset = null, ?int $length = null)
+    function absolute_offset_length($items, int $offset = null, ?int $length = null): array
     {
         $count = Data::count($items);
 
@@ -639,6 +694,27 @@ if (!function_exists('absolute_offset_length')) {
         }
 
         return [$startoffset, $endoffset];
+    }
+
+}
+
+if (!function_exists('absolute_offset')) {
+
+    /**
+     * Given an array or countable and an offset, return the absolute offset
+     *
+     * @param $items
+     * @param int $offset
+     * @param int|null $length
+     * @return int
+     */
+    function absolute_offset($items, int $offset = null): int
+    {
+        $count = Data::count($items);
+        if ($offset < 0) {
+            $offset = $count + $offset;
+        }
+        return $offset;
     }
 
 }

@@ -9,11 +9,60 @@
  */
 namespace MainframeTest\Utils\Helper;
 
+use Mainframe\Utils\Exception\ValueNotFoundException;
 use Mainframe\Utils\Helper\Data;
 use MainframeTest\Utils\MainframeTestCase;
 
 class DataTest extends MainframeTestCase
 {
+    public function testHas()
+    {
+        $arr = array_flip(range('a','z'));
+        $this->assertTrue(Data::has($arr, 'a'));
+        $this->assertTrue(Data::has($arr, 'z'));
+        $this->assertFalse(Data::has($arr, 'aa'));
+        $this->assertTrue(Data::has($arr, ['a','h','k']));
+        $this->assertFalse(Data::has($arr, ['a', 'b', 1, 'c', '239o']));
+    }
+
+    public function testGet()
+    {
+        $arr = array_flip(range('a','z'));
+        $this->assertSame(0, Data::get($arr, 'a'));
+        $this->assertSame(25, Data::get($arr, 'z'));
+        $this->assertSame('not found', Data::get($arr, 'aa', 'not found'));
+        $this->assertSame([
+            'a' => 0,
+            'h' => 7,
+            'k' => 10,
+        ], Data::get($arr, ['a','h','k']));
+        $this->assertSame([
+            'a' => 0,
+            'b' => 1,
+            1 => 'nope',
+            'c' => 2,
+            '239o' => 'nope',
+        ], Data::get($arr, ['a', 'b', 1, 'c', '239o'], 'nope'));
+    }
+
+    public function testContains()
+    {
+        $range = range('a','z');
+        $this->assertTrue(Data::contains($range, 'd'));
+        $this->assertTrue(Data::contains($range, 'z', 25));
+        $this->assertFalse(Data::contains($range, 'ds'));
+        $this->assertFalse(Data::contains($range, 'd', 1));
+    }
+
+    public function testContainsAll()
+    {
+        $range = range('a','z');
+        $this->assertTrue(Data::containsAll($range, ['a','v','d','c','w']));
+        $this->assertFalse(Data::containsAll($range, ['a','v','d','c','w', 10]));
+        $this->assertTrue(Data::containsAll($range, ['a','b','c','d','e'], true));
+        $this->assertFalse(Data::containsAll($range, ['a','b','c','d','e',48 => 'f'], true));
+    }
+
     public function testCut()
     {
         $range = range('a','z') + range(1, 100);
@@ -150,5 +199,33 @@ class DataTest extends MainframeTestCase
             Data::union(range(1,25), range('a','i'), range(26, 50)),
             Data::cutInto($arr, $arr2, 25)
         );
+    }
+
+    public function testIndexOf()
+    {
+        $arr = range('z',  'a');
+        $arr2 = range(0, 100);
+        $this->assertEquals($arr2[18], Data::indexOf($arr2, '18'));
+        $this->assertEquals(11, Data::indexOf($arr, 'o'));
+    }
+
+    public function testIndexOfLast()
+    {
+        $arr = range('z',  'a');
+        $arr = Data::union($arr, range('z', 'k'), range(1, 59), range(10, 73), range('a', 'x'));
+        $arr2 = range(0, 100);
+        $this->assertEquals(167, Data::indexOfLast($arr, 'c'));
+        $this->assertEquals(107, Data::indexOfLast($arr, '16'));
+        $this->assertNull(Data::indexOfLast($arr, 'notfound'));
+        $this->assertEquals(39, Data::indexOfLast($arr2, 39, true));
+        $this->assertNull(Data::indexOfLast($arr2, '39', true));
+    }
+
+    public function testExceptionThrownByIndexOf()
+    {
+        $value = 100;
+        $arr = range(1, 20);
+        $this->expectException(ValueNotFoundException::class);
+        Data::indexOf($arr, $value, true, true);
     }
 }

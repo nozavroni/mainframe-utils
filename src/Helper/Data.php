@@ -14,12 +14,14 @@ use ArrayAccess;
 use ArrayObject;
 use Closure;
 use Countable;
-use Mainframe\Utils\Data\Pair;
-use Mainframe\Utils\Data\StackableInterface;
+use Mainframe\Utils\Container\Pair;
+use Mainframe\Utils\Container\StackableInterface;
 use Mainframe\Utils\Exception\BadMethodCallException;
 use Mainframe\Utils\Exception\InvalidArgumentException;
 use Mainframe\Utils\Exception\OutOfBoundsException;
 use Mainframe\Utils\Exception\OutOfRangeException;
+use Mainframe\Utils\Exception\UnderflowException;
+use Mainframe\Utils\Exception\ValueNotFoundException;
 use SplDoublyLinkedList;
 use function Mainframe\Utils\str;
 
@@ -44,6 +46,13 @@ class Data
      */
     public static function get($items, $path = null, $default = null, $delim = null)
     {
+        if (is_iterable($path)) {
+            return Data::map(
+                Data::toArray($path),
+                fn ($k, $_, $i) => new Pair($k, static::get($items, $k, $default, $delim))
+            );
+        }
+
         if (is_null($delim)) {
             $delim = '.';
         }
@@ -85,6 +94,14 @@ class Data
         return $default;
     }
 
+    public static function flip($items)
+    {
+        if (!is_array($items)) {
+            $items = Data::toArray($items);
+        }
+        return array_flip($items);
+    }
+
     /**
      * @param $items
      * @return mixed
@@ -122,17 +139,20 @@ class Data
      * @param bool $expected
      * @return bool
      */
-    public static function assert($items, ?callable $func = null, $expected = true): bool
+    public static function assert($items, ?callable $func = null, $expected = true, $strict = true): bool
     {
         $index = 0;
+        $cmp = fn($val) => $strict ? $val === $expected : $val == $expected;
         foreach (static::toArray($items) as $key => $val) {
             // @tests needed
             if (is_null($func)) {
-                if ($val != $expected) {
+                if (!$cmp($val)) {
                     return false;
                 }
-            } elseif ($func($val, $key, $index++) !== $expected) {
-                return false;
+            } else {
+                if (!$cmp($func($val, $key, $index++))) {
+                    return false;
+                }
             }
         }
 
@@ -140,6 +160,35 @@ class Data
     }
 
     /**
+     * Get the nth item in the data (indexed from 0)
+     *
+     * @param iterable $items The data to positionally retrieve an item from
+     * @param int $pos The position (from 0)
+     * @return mixed
+     */
+    public static function getByOffset($items, int $offset, $default = null)
+    {
+        return Data::get($items, static::getKeyByOffset($items, $offset), $default);
+    }
+
+    /**
+     * Get the nth item in the data
+     *
+     * @param iterable $items The data to positionally retrieve an item from
+     * @param int $offset The position (from 0)
+     * @return mixed
+     */
+    public static function getKeyByOffset($items, int $offset)
+    {
+        $offset = absolute_offset($items, $offset);
+        return BadMethodCallException::swap(
+            fn() => Data::first(Data::keys($items), fn($k, $_, $i) => $i === $offset),
+            OutOfBoundsException::class,
+            sprintf('No key at offset: %d', $offset)
+        );
+    }
+
+    /**                                                           oi0u
      * Get the nth item in the data
      *
      * @param iterable $items The data to positionally retrieve an item from
@@ -148,7 +197,7 @@ class Data
      */
     public static function getByPos($items, int $pos, $default = null)
     {
-        return OutofRangeException::recover(
+        return OutOfBoundsException::recover(
             function () use ($items, $pos) {
                 return Data::get($items, static::getKeyByPos($items, $pos));
             },
@@ -188,6 +237,29 @@ class Data
     }
 
     /**
+     * Return an array of each item converted to a string
+     *
+     * @param iterable $items The items to convert to strings
+     * @return string[]
+     */
+    public static function strings($items)
+    {
+        return Data::map($items, fn($v, $k, $i) => (string) $v);
+    }
+
+    /**
+     * Join items together, optionally using a delimiter
+     *
+     * @param $items
+     * @param string $delim
+     * @return string
+     */
+    public static function join($items, $delim = '')
+    {
+        return implode($delim, Data::toIndex($items));
+    }
+
+    /**
      * Check if data structure has a given key or dot-notation path
      *
      * @param mixed $items Anything that can be converted to an array (see to_array)
@@ -197,6 +269,9 @@ class Data
      */
     public static function has($items, $path = null, $delim = null): bool
     {
+        if (is_iterable($path)) {
+            return static::assert($path, fn($v, $k, $i) => static::has($items, $v, $delim));
+        }
         return (static::get($items, $path, static::NOT_FOUND, $delim) !== static::NOT_FOUND);
     }
 
@@ -321,8 +396,35 @@ class Data
         );
     }
 
+    public static function indexOf($items, $value, $identical = false, $throwOnFailure = false): ?int
+    {
+        $indexOf = null;
+        $cmp = fn ($a, $b) => $identical ? $a === $b : $a == $b;
+        static::each($items, function($v, $k, $i) use (&$indexOf, $value, $cmp) {
+            if ($cmp($v, $value)) {
+                $indexOf = $i;
+                return false;
+            }
+        });
+        ValueNotFoundException::raiseIf($indexOf === null && $throwOnFailure, null, compact('value'));
+        return $indexOf;
+    }
+
+    public static function indexOfLast($items, $value, $identical = false, $throwOnFailure = false): ?int
+    {
+        $indexOf = null;
+        $cmp = fn ($a, $b) => $identical ? $a === $b : $a == $b;
+        static::each($items, function($v, $k, $i) use (&$indexOf, $value, $cmp) {
+            if ($cmp($v, $value)) {
+                $indexOf = $i;
+            }
+        });
+        ValueNotFoundException::raiseIf($indexOf === null && $throwOnFailure, null, compact('value'));
+        return $indexOf;
+    }
+
     /**
-     * Determine if data contains given value
+     * Determine if data contains given valuea
      *
      * Checks the data for an item exactly equal to $value. If $value is a callback function, it will be passed
      * the typical arguments ($value, $key, $index) and a true return value will count as a match.
@@ -354,6 +456,9 @@ class Data
 //        return false;
 
         return (bool) static::reduce($items, function ($a, $v, $k, $i) use ($key, $value) {
+            if ($a === true) {
+                return true;
+            }
             $matchkey = fn ($m) => is_null($key) || $m === $key;
             if (is_callable($value)) {
                 if ($value($v, $k, $i)) {
@@ -369,7 +474,7 @@ class Data
     }
 
     /**
-     * Assert that a list of values contains ALL of another list of values
+     * Validate that a list of values contains ALL of another list of values
      *
      * @param iterable $items The array or iterable
      * @param iterable $values Values to check
@@ -382,7 +487,7 @@ class Data
     }
 
     /**
-     * Assert that a list of values contains ANY of another list of values
+     * Validate that a list of values contains ANY of another list of values
      *
      * @param iterable $items The array or iterable
      * @param iterable $values Values to check
@@ -458,6 +563,26 @@ class Data
     }
 
     /**
+     * Essentially wraps item in an array if it isn't already
+     *
+     * @param $item
+     * @return array
+     */
+    public static function wrap($item): array
+    {
+        if (!is_array($item)) {
+            if (is_iterable($item)) {
+                return iterator_to_array($item);
+            }
+            if (is_null($item)) {
+                return [];
+            }
+            return [$item];
+        }
+        return $item;
+    }
+
+    /**
      * In this context "index" refers to an array that is sequentially, numerically indexed
      *
      * @param $items
@@ -506,16 +631,11 @@ class Data
      * @param null $default
      * @return mixed
      */
-    public static function first($items, ?callable $func, $default = null)
+    public static function first(iterable $items, $func = null, $default = null)
     {
-        InvalidArgumentException::raiseUnless(
-            is_iterable($items),
-            'Cannot get first item from data structure, as it is not iterable'
-        );
-
         $index = 0;
         foreach ($items as $key => $val) {
-            if (is_null($func) || $func($val, $key, $index++)) {
+            if (is_null($func) || value_of($func, $val, $key, $index++)) {
                 return $val;
             }
         }
@@ -535,29 +655,30 @@ class Data
      * @param null $default
      * @return mixed
      */
-    public static function last($items, ?callable $func, $default = null)
+    public static function last(iterable $items, $func = null, $default = null)
     {
-        InvalidArgumentException::raiseUnless(
-            is_iterable($items),
-            'Cannot get last item from data structure, as it is not iterable'
-        );
+// @todo why am I doing all this in here? two of these do the same thing and they all do
+//       essentially what static::reverse does so just use that...??
+//        if ($items instanceof \SplDoublyLinkedList) {
+//            // set it to iterate from the other end
+//            $items = static::reverse($items);
+//        } else {
+//            if (method_exists($items, 'reverse')) {
+//                $items = $items->reverse();
+//            } else {
+//                $items = array_reverse(static::toArray($items));
+//            }
+//        }
 
-        if ($items instanceof \SplDoublyLinkedList) {
-            // set it to iterate from the other end
-            $items = static::reverse($items);
-        } else {
-            if (method_exists($items, 'reverse')) {
-                $items = $items->reverse();
-            } else {
-                $items = array_reverse(static::toArray($items));
-            }
-        }
+        $args = func_get_args();
+        $args[0] = static::reverse($items);
 
-        $args = [$items, $func];
-        if ($def = func_get_arg(2)) {
-            // we only want to send a default if one was provided explicitly even if it was null
-            $args[] = $def;
-        }
+//        $args = [$items, $val];
+//        if ($def = func_get_arg(2)) {
+//            // we only want to send a default if one was provided explicitly even if it was null
+//            $args[] = $def;
+//        }
+
         return static::first(...$args);
     }
 
@@ -892,7 +1013,7 @@ class Data
      * @param $input
      * @return array
      */
-    public static function cutInto(iterable $items, $input, int $offset): array
+    public static function cutInto(iterable $items, $input, int $offset, $inclusive = true): array
     {
         [$top, $bottom] = static::cut($items, $offset);
         return Data::union($top, $input, $bottom);
@@ -903,7 +1024,7 @@ class Data
      * @param int $offset
      * @return array|array[]
      */
-    public static function cut($items, int $offset): array
+    public static function cut($items, int $offset, $inclusive = true): array
     {
         $count = count($items);
         if ($offset < (0 - $count)) {
@@ -913,7 +1034,8 @@ class Data
             return [Data::toArray($items), []];
         }
         [$offset, $_] = absolute_offset_length($items, $offset);
-        return static::partition($items, fn($v, $k, $i) => $i < $offset);
+        $cmp = fn($a, $b) => $inclusive ? $a < $b : $a <= $b;
+        return static::partition($items, fn($v, $k, $i) => $cmp($i, $offset));
     }
 
     /**

@@ -14,7 +14,7 @@ class Stream
     /**
      * Create a stream resource from a string or other data
      *
-     * @param mixed $data Data to convert to a stream
+     * @param mixed $data Container to convert to a stream
      * @return resource
      */
     public static function convert($data)

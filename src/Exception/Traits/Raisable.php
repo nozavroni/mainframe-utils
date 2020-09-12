@@ -100,14 +100,15 @@ trait Raisable
         ];
 
         $args = $args + $predefined;
-        if (empty($required) || !Data::containsAll(Data::keys($args), $required)) {
+        if (!empty($required) && !Data::containsAll(Data::keys($args), $required)) {
             throw new LogicException('Missing some required args for raisable exception');
         }
 
         return new static (
             vsprintf (
                 Str::template($str, $args, static::$replFormat),
-                array_filter($args, fn ($key) => is_int($key), ARRAY_FILTER_USE_KEY)
+                $args,
+                // array_filter($args, fn ($key) => is_int($key), ARRAY_FILTER_USE_KEY)
             ),
             0,
             $throwable

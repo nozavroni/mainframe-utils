@@ -27,7 +27,7 @@ class Str
      */
     public static function template($template, array $context, string $repl_format = '%s')
     {
-        $context = array_filter($context, fn ($val) => is_string($val));
+        $context = array_map(fn ($val) => valinfo($val), $context);
         if (is_array($template)) {
             return array_map(function($str) use ($context, $repl_format) {
                 return static::template($str, $context, $repl_format);
@@ -100,7 +100,22 @@ class Str
      */
     public static function make($value): MString
     {
-        return Str::make($value);
+        return new MString(static::toString($value));
+    }
+
+    /**
+     * Convert iterable or scalar to a single string
+     * Accepts either an iterable or a single value to convert to a single string
+     *
+     * @param iterable|mixed $strs Any value that can be converted to a string
+     * @return string
+     */
+    public static function toString($strs)
+    {
+        if (!is_iterable($strs)) {
+            return (string)$strs;
+        }
+        return Data::join($strs, '');
     }
 
 //    public static function compare()
